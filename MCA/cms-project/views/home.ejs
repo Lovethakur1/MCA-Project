@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCA - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+        .content {
+            min-height: 400px;
+            text-align: center;
+            padding: 40px 0;
+        }
+        .footer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            background-color: #333;
+            color: white;
+            padding: 40px;
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+        .footer-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+        .footer-section p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .admin-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .admin-link:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <a href="/admin/login" class="admin-link">Admin Login</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>MCA Personal Training</h1>
+            <p>Professional fitness training and coaching</p>
+        </div>
+        
+        <div class="content">
+            <h2>Welcome to MCA Personal Training</h2>
+            <p>This is a simple CMS demo focusing on footer content management.</p>
+            <p>The footer below is editable through the admin panel.</p>
+        </div>
+        
+        <div class="footer">
+            <% 
+            const getContentValue = (section, key, defaultValue = '') => {
+                const item = footerContent.find(item => item.section === section && item.key === key);
+                return item ? item.value : defaultValue;
+            }
+            %>
+            
+            <!-- Business Hours Section -->
+            <div class="footer-section">
+                <h3><%= getContentValue('business-hours', 'title', 'Business Hours') %></h3>
+                <p><%= getContentValue('business-hours', 'monday', 'Monday 8:00am - 8:30pm') %></p>
+                <p><%= getContentValue('business-hours', 'tuesday', 'Tuesday 8:00am - 8:30pm') %></p>
+                <p><%= getContentValue('business-hours', 'wednesday', 'Wednesday 8:00am - 8:30pm') %></p>
+                <p><%= getContentValue('business-hours', 'thursday', 'Thursday 8:00am - 8:30pm') %></p>
+                <p><%= getContentValue('business-hours', 'friday', 'Friday 8:00am - 8:30pm') %></p>
+                <p><%= getContentValue('business-hours', 'saturday', 'Saturday 9:00am - 7:30pm') %></p>
+                <p><%= getContentValue('business-hours', 'sunday', 'Sunday CLOSED') %></p>
+            </div>
+            
+            <!-- Studio Info Section -->
+            <div class="footer-section">
+                <h3><%= getContentValue('studio-info', 'title', 'Private Studio') %></h3>
+                <p><%= getContentValue('studio-info', 'company', 'Personal Trainer Basel GmbH') %></p>
+                <p><%= getContentValue('studio-info', 'address', 'Ruchfeldstrasse 24') %></p>
+                <p><%= getContentValue('studio-info', 'city', '4142 Münchenstein') %></p>
+            </div>
+            
+            <!-- Contact Section -->
+            <div class="footer-section">
+                <h3><%= getContentValue('contact', 'main-title', 'Get in touch with us') %></h3>
+                <h4><%= getContentValue('contact', 'phone-title', 'TELEPHONE NUMBER') %></h4>
+                <p><%= getContentValue('contact', 'phone', '+41795217192') %></p>
+                <h4><%= getContentValue('contact', 'email-title', 'EMAIL') %></h4>
+                <p><%= getContentValue('contact', 'email', 'info@personaltrainerbasel.ch') %></p>
+            </div>
+            
+            <!-- Copyright Section -->
+            <div class="footer-section">
+                <p><%= getContentValue('copyright', 'text', '©2023 All Rights Reserved') %></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

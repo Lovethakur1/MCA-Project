@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Mary Carmen</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <%- include('partials/navbar') %>
+
+    <!-- COACH MARY CARMEN HERO SECTION  -->
+
+    <section class="hero-section">
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="/media/homebackground.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- <div class="hero-content">
+            <h1 class="hashtag">#MakeTheMost</h1>
+            <h2>Personal Trainer in Basel</h2>
+            <p>
+                With me as your personal trainer, you will achieve a strong body and a happy mind.
+            </p>
+            <a href="#" class="hero-btn">Arrange Initial Consultation</a>
+        </div> -->
+    </section>
+
+
+
+
+    <!-- COACH INTRO SECTION  -->
+
+
+    <div class="coachintro">
+        <div class="introleft">
+            <h1>Hello, I'm Your <br><span>New Fitness</span> Trainer!</h1>
+            <p>
+                I Am Mary, Born In Basel In 1997 And Have Been Passionate About
+                Sport Since I Was A Child. At The Age Of
+                Five, I Discovered The Children's Circus And Began To Explore My Body Intensively. These Early
+                Experiences In Floor Acrobatics, Juggling And Partner Aerial Acrobatics
+                Laid The Foundation For My Sporting Development. Sport Is Not Only A
+                Passion For Me, But Also Coaching. I Love Working With People
+                As A Fitness Trainer, Getting To Know Them On A Personal Level And Finding
+                Out What They Really Need. My
+                Goal Is To Inspire You And Show You
+                That You Can Achieve Anything With The Right Attitude.
+            </p>
+        </div>
+
+        <div class="imageright">
+            <img src="/media/coachmarycarmen.jpg" alt="Coach Image">
+        </div>
+    </div>
+
+    <div class="coachintro2">
+
+        <div class="imageleft">
+            <img src="/media/coach2.jpg" alt="Coach Mary Carmen">
+        </div>
+
+        <div class="introright">
+            <h1>From The Depths To The Power - The Moving Story Of Fitness Trainer Mary Carmen.</h1>
+            <p>
+                My Path Has Not Always Been Easy. In My Youth, I Struggled With Depression
+                And Eating Disorders, But Found My Way Back To Myself With Professional
+                Help. Today I Live A Healthy And Conscious Life.
+                Since 2018 I Have Been Dedicated To Functional Fitness Training.
+                In 2021 I Founded My Own Personal Training And Health Promotion Company.
+                Since 2024, I Have Been A Member Of The Swiss Personal Training Association
+                And A Swica-Recognised Senior Personal Trainer. In Addition,
+                Our Studio Is QualiTop Certified And Therefore Has 20 Health Insurance Companies
+                That Will Reimburse You For Part Of The Costs Of Your Fitness Training
+                And Personal Training.
+                My Goal Is To Help People Of All Ages Achieve Their Goals, Whether It's
+                A Change In Your Body Or An Improvement In Your Everyday Life.
+                The First Step Is Crucial: Dare To Try Something New!
+                Together We Will Create A Solid Foundation For Your Well-Being.
+                If You Are Ready To Make A Change, Don't Hesitate To Contact Me!
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- WAVE VIDEO SECTION  -->
+
+    <section class="wave-hero">
+        <video class="wave-video" autoplay muted loop playsinline>
+            <source src="/media/6936065_Water_Bubble_1920x1080.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <div class="wave-overlay"></div>
+
+        <div class="wave-content">
+            <h1 class="wave-heading">We are more than just a gym</h1>
+            <p class="wave-text">
+                Ultimate Performance has radically redefined the art and science of one-to-one training to create an
+                experience that will transform your body, your health and your life. We are not just personal trainers.
+                We are more than just a gym. We have invested in building an ecosystem of world-class trainers,
+                cutting-edge data and systems of accountability that give you a cast-iron blueprint for success that
+                will work if you commit to the process. Whether you work together with us one-to-one in the gym,
+                virtually, or online, our ethos is the same — excellence in everything we do, honesty and integrity as
+                your trusted partner, and an approach tailored to your unique goals that delivers you maximum results in
+                minimum time.
+            </p>
+        </div>
+    </section>
+
+
+
+    <!-- COACH PAGE BLOG SECTION  -->
+
+
+    <div class="goto-blog-section-container">
+
+        <div class="goto-blog-intro">
+            <p class="goto-subtitle">BLOG</p>
+            <h2 class="goto-title">YOUR GO-TO BLOG</h2>
+            <p class="goto-description">
+                Your weekly source for lifestyle and nutrition tips, exclusive insights and everything about current
+                topics in personal training.
+            </p>
+            <a href="#" class="goto-cta-button">To the blog</a>
+        </div>
+
+        <div class="goto-carousel-navigation">
+            <button class="goto-nav-arrow" id="goto-prevBtn" aria-label="Previous posts">←</button>
+            <button class="goto-nav-arrow" id="goto-nextBtn" aria-label="Next posts">→</button>
+        </div>
+
+        <div class="goto-carousel-wrapper">
+            <div class="goto-blog-carousel" id="goto-blogCarousel">
+
+                <div class="goto-blog-post">
+                    <img src="https://images.pexels.com/photos/1152237/pexels-photo-1152237.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        alt="Healthy grain bowl">
+                    <div class="goto-post-content">
+                        <span class="goto-post-date">19. 12. 2024</span>
+                        <h3 class="goto-post-title">Top 5 Holiday Hacks</h3>
+                        <p class="goto-post-excerpt">At MTM Gym, we're sharing 5 simple holiday nutrition hacks - like
+                            prioritizing proteins, staying active after meals, and sipping herbal teas - to help you
+                            maintain balanced blood sugar and energy during the festive season.</p>
+                        <a href="#" class="goto-read-more">Read more</a>
+                    </div>
+                </div>
+
+                <div class="goto-blog-post">
+                    <img src="https://images.pexels.com/photos/1640775/pexels-photo-1640775.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        alt="Pasta with salmon and spinach">
+                    <div class="goto-post-content">
+                        <span class="goto-post-date">19. 12. 2024</span>
+                        <h3 class="goto-post-title">Top 5 Holiday Hacks</h3>
+                        <p class="goto-post-excerpt">At MTM Gym, we're sharing 5 simple holiday nutrition hacks - like
+                            prioritizing proteins, staying active after meals, and sipping herbal teas - to help you
+                            maintain balanced blood sugar and energy during the festive season.</p>
+                        <a href="#" class="goto-read-more">Read more</a>
+                    </div>
+                </div>
+
+                <div class="goto-blog-post">
+                    <img src="https://images.pexels.com/photos/1247677/pexels-photo-1247677.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        alt="Table with various healthy foods">
+                    <div class="goto-post-content">
+                        <span class="goto-post-date">19. 12. 2024</span>
+                        <h3 class="goto-post-title">Top 5 Holiday Hacks</h3>
+                        <p class="goto-post-excerpt">At MTM Gym, we're sharing 5 simple holiday nutrition hacks - like
+                            prioritizing proteins, staying active after meals, and sipping herbal teas - to help you
+                            maintain balanced blood sugar and energy during the festive season.</p>
+                        <a href="#" class="goto-read-more">Read more</a>
+                    </div>
+                </div>
+
+                <div class="goto-blog-post">
+                    <img src="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        alt="Pancakes with berries">
+                    <div class="goto-post-content">
+                        <span class="goto-post-date">12. 12. 2024</span>
+                        <h3 class="goto-post-title">Energizing Breakfast Ideas</h3>
+                        <p class="goto-post-excerpt">Start your day right with these high-protein breakfast recipes that
+                            are both delicious and easy to make. Fuel your workouts and your day ahead.</p>
+                        <a href="#" class="goto-read-more">Read more</a>
+                    </div>
+                </div>
+
+                <div class="goto-blog-post">
+                    <img src="https://images.pexels.com/photos/842571/pexels-photo-842571.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        alt="Avocado toast">
+                    <div class="goto-post-content">
+                        <span class="goto-post-date">05. 12. 2024</span>
+                        <h3 class="goto-post-title">The Power of Healthy Fats</h3>
+                        <p class="goto-post-excerpt">Not all fats are created equal. Learn about the benefits of
+                            incorporating healthy fats like avocado, nuts, and olive oil into your diet for better
+                            health.</p>
+                        <a href="#" class="goto-read-more">Read more</a>
+                    </div>
+                </div>
+
+                <div class="goto-blog-post">
+                    <img src="https://images.pexels.com/photos/406152/pexels-photo-406152.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        alt="Man stretching before workout">
+                    <div class="goto-post-content">
+                        <span class="goto-post-date">28. 11. 2024</span>
+                        <h3 class="goto-post-title">Why Stretching is Non-Negotiable</h3>
+                        <p class="goto-post-excerpt">Discover the importance of a proper warm-up and cool-down. We share
+                            essential stretching techniques to improve flexibility and prevent injuries.</p>
+                        <a href="#" class="goto-read-more">Read more</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TESTIMONIAL SECTION SAME AS HOMEPAGE  -->
+
+    <section class="reviews-section">
+        <div class="reviews-container">
+            <h2 class="reviews-heading">Global Personal Training Client Reviews</h2>
+            <p class="reviews-subheading">
+                See what more than 7,500 of our clients across the globe say
+            </p>
+            <div class="reviews-rating">
+                <span class="rating-score">4.9 ★★★★★</span>
+                <p class="rating-count">Based on (7,500+)</p>
+            </div>
+
+            <div class="reviews-slider-wrapper">
+                <button class="arrow-btn left-arrow">&larr;</button>
+
+                <div class="reviews-slider">
+                    <div class="testimonial">
+                        <h3>Rodrigo Maciel (London - City)</h3>
+                        <p class="stars">★★★★★</p>
+                        <p class="text">
+                            Joining UP is the best investment I have ever made. I’ve achieved results which,
+                            after years of hard training and healthy eating, I never thought my body was
+                            capable of. I’ve gained so much from this process, I’m more educated...
+                        </p>
+                        <a href="#">Full review on Google</a>
+                    </div>
+
+                    <div class="testimonial">
+                        <h3>Rodrigo Maciel (London - City)</h3>
+                        <p class="stars">★★★★★</p>
+                        <p class="text">
+                            Joining UP is the best investment I have ever made. I’ve achieved results which,
+                            after years of hard training and healthy eating, I never thought my body was
+                            capable of. I’ve gained so much from this process, I’m more educated...
+                        </p>
+                        <a href="#">Full review on Google</a>
+                    </div>
+
+                    <div class="testimonial">
+                        <h3>Rodrigo Maciel (London - City)</h3>
+                        <p class="stars">★★★★★</p>
+                        <p class="text">
+                            Joining UP is the best investment I have ever made. I’ve achieved results which,
+                            after years of hard training and healthy eating, I never thought my body was
+                            capable of. I’ve gained so much from this process, I’m more educated...
+                        </p>
+                        <a href="#">Full review on Google</a>
+                    </div>
+
+                    <div class="testimonial">
+                        <h3>Rodrigo Maciel (London - City)</h3>
+                        <p class="stars">★★★★★</p>
+                        <p class="text">
+                            Joining UP is the best investment I have ever made. I’ve achieved results which,
+                            after years of hard training and healthy eating, I never thought my body was
+                            capable of. I’ve gained so much from this process, I’m more educated...
+                        </p>
+                        <a href="#">Full review on Google</a>
+                    </div>
+
+                    <div class="testimonial">
+                        <h3>Rodrigo Maciel (London - City)</h3>
+                        <p class="stars">★★★★★</p>
+                        <p class="text">
+                            Joining UP is the best investment I have ever made. I’ve achieved results which,
+                            after years of hard training and healthy eating, I never thought my body was
+                            capable of. I’ve gained so much from this process, I’m more educated...
+                        </p>
+                        <a href="#">Full review on Google</a>
+                    </div>
+
+                    <div class="testimonial">
+                        <h3>Rodrigo Maciel (London - City)</h3>
+                        <p class="stars">★★★★★</p>
+                        <p class="text">
+                            Joining UP is the best investment I have ever made. I’ve achieved results which,
+                            after years of hard training and healthy eating, I never thought my body was
+                            capable of. I’ve gained so much from this process, I’m more educated...
+                        </p>
+                        <a href="#">Full review on Google</a>
+                    </div>
+
+                </div>
+
+                <button class="arrow-btn right-arrow">&rarr;</button>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- FAQ SECTION  -->
+
+    <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                I need consultation about the prices of StrongX's services?
+            </button>
+            <div class="faq-answer">
+                <p>Our prices depend on your goals. Contact us for a personalized quote and free consultation.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                As a beginner, how can I find out which workout program is right for me?
+            </button>
+            <div class="faq-answer">
+                <p>Our trainers offer an initial assessment to design a program tailored to your needs and experience
+                    level.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                Is my membership card valid for use at all StrongX facilities?
+            </button>
+            <div class="faq-answer">
+                <p>Yes! StrongX memberships give you access to all our nationwide facilities.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                What are StrongX's operating hours?
+            </button>
+            <div class="faq-answer">
+                <p>Most StrongX locations are open 6AM-10PM Monday to Saturday, and 8AM-8PM on Sunday.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                Does StrongX offer childcare services?
+            </button>
+            <div class="faq-answer">
+                <p>Yes, select locations have childcare available during peak hours. Please check with your local gym.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Coach PAGE BLOG POST JS  -->
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const carousel = document.getElementById('goto-blogCarousel');
+            const prevBtn = document.getElementById('goto-prevBtn');
+            const nextBtn = document.getElementById('goto-nextBtn');
+
+            // --- Configuration ---
+            const totalItems = carousel.children.length;
+            let itemsPerView = 3; // Default for desktop
+
+            let currentIndex = 0;
+
+            function updateItemsPerView() {
+                if (window.innerWidth <= 640) {
+                    itemsPerView = 1;
+                } else if (window.innerWidth <= 1024) {
+                    itemsPerView = 2;
+                } else {
+                    itemsPerView = 3;
+                }
+                // Reset to the beginning on resize to avoid broken layouts
+                currentIndex = 0;
+                updateCarousel();
+            }
+
+            function updateCarousel() {
+                const itemWidth = carousel.children[0].getBoundingClientRect().width;
+                const gap = parseFloat(window.getComputedStyle(carousel).gap);
+                const offset = -currentIndex * (itemWidth + gap);
+                carousel.style.transform = `translateX(${offset}px)`;
+                updateButtons();
+            }
+
+            function updateButtons() {
+                // Disable prev button if at the start
+                prevBtn.disabled = currentIndex === 0;
+                // Disable next button if at the end
+                nextBtn.disabled = currentIndex >= totalItems - itemsPerView;
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < totalItems - itemsPerView) {
+                    currentIndex += itemsPerView;
+                    // Ensure currentIndex doesn't go out of bounds
+                    if (currentIndex > totalItems - itemsPerView) {
+                        currentIndex = totalItems - itemsPerView;
+                    }
+                    updateCarousel();
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex -= itemsPerView;
+                    // Ensure currentIndex doesn't go below 0
+                    if (currentIndex < 0) {
+                        currentIndex = 0;
+                    }
+                    updateCarousel();
+                }
+            });
+
+            // Initial setup
+            updateItemsPerView();
+
+            // Update on window resize
+            window.addEventListener('resize', updateItemsPerView);
+        });
+    </script>
+
+
+
+    <!-- NAVBAR JS  -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const personalTrainingBtn = document.getElementById('personal-training-btn');
+            const megaDropdown = document.getElementById('mega-dropdown');
+            const allNavItems = document.querySelectorAll('.nav-item');
+
+            // Toggle dropdown on Personal Training click
+            personalTrainingBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const isOpen = megaDropdown.classList.contains('show');
+
+                // Close dropdown if open, open if closed
+                if (isOpen) {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                } else {
+                    megaDropdown.classList.add('show');
+                    personalTrainingBtn.classList.add('active');
+                }
+            });
+
+            // Close dropdown when clicking on other nav items
+            allNavItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                });
+            });
+
+            // Close dropdown when clicking anywhere else
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.mega-menu')) {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside it
+            megaDropdown.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+
+     <!-- Testimonial JS  -->
+    
+   <script>
+    const slider = document.querySelector('.reviews-slider');
+    const testimonials = slider.querySelectorAll('.testimonial');
+    const leftArrow = document.querySelector('.left-arrow');
+    const rightArrow = document.querySelector('.right-arrow');
+    let currentIndex = 0;
+
+    function getItemsPerSlide() {
+        return 3; // Always show 3 per slide regardless of screen size
+    }
+
+    function updateSlider() {
+        const itemsPerSlide = getItemsPerSlide();
+        const testimonialWidth = slider.querySelector('.testimonial').offsetWidth + 20; // width + gap
+        const totalGroups = Math.ceil(testimonials.length / itemsPerSlide);
+
+        // Clamp currentIndex
+        if (currentIndex < 0) currentIndex = 0;
+        if (currentIndex >= totalGroups) currentIndex = totalGroups - 1;
+
+        const translateX = -(testimonialWidth * itemsPerSlide * currentIndex);
+        slider.style.transform = `translateX(${translateX}px)`;
+    }
+
+    leftArrow.addEventListener('click', () => {
+        currentIndex--;
+        updateSlider();
+    });
+
+    rightArrow.addEventListener('click', () => {
+        currentIndex++;
+        updateSlider();
+    });
+
+    window.addEventListener('resize', updateSlider);
+    window.addEventListener('load', updateSlider);
+</script>
+
+
+    <!-- FAQ ACCORDION  -->
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = button.parentElement;
+                const answer = item.querySelector('.faq-answer');
+
+                // Collapse other open items
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('active');
+
+                // Scroll to the opened answer smoothly if expanded
+                // if (item.classList.contains('active')) {
+                //     setTimeout(() => {
+                //         answer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                //     }, 300); // Wait for expand animation
+                // }
+            });
+        });
+    </script>
+
+    <%- include('partials/footer') %>
+
+</body>
+
+</html>

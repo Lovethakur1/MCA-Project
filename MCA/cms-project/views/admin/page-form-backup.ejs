@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - MCA Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900"><%= title %></h1>
+                    <p class="text-gray-600 mt-1">
+                        <% if (isEdit) { %>
+                            Edit page content and settings
+                        <% } else { %>
+                            Create a new dynamic page with the same UI as index page
+                        <% } %>
+                    </p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="/admin/pages" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-200">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Pages
+                    </a>
+                    <button type="submit" form="pageForm" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                        <i class="fas fa-save mr-2"></i>Save Page
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-6xl mx-auto p-6">
+            <form id="pageForm" action="<%= isEdit ? `/admin/pages/${page._id}` : '/admin/pages' %>" method="POST" class="space-y-8">
+                
+                <!-- 1. BASIC INFORMATION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-info-circle text-indigo-600 mr-3"></i>
+                        Basic Information
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Page Title *</label>
+                            <input type="text" id="title" name="title" value="<%= page ? page.title : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="e.g., Nutrition Plans - Personal Trainer Basel"
+                                   required>
+                        </div>
+                        
+                        <div>
+                            <label for="slug" class="block text-sm font-medium text-gray-700 mb-2">URL Slug *</label>
+                            <div class="flex">
+                                <span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">/page/</span>
+                                <input type="text" id="slug" name="slug" value="<%= page ? page.slug : '' %>" 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-r-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="nutrition-plans"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label for="metaDescription" class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
+                        <textarea id="metaDescription" name="metaDescription" rows="3" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                  placeholder="Professional nutrition coaching and meal plans in Basel..."><%= page ? page.metaDescription : '' %></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="active" <%= page && page.status === 'active' ? 'selected' : '' %>>Active</option>
+                                <option value="draft" <%= page && page.status === 'draft' ? 'selected' : '' %>>Draft</option>
+                                <option value="archived" <%= page && page.status === 'archived' ? 'selected' : '' %>>Archived</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Show in Navigation</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="showInNav" name="showInNav" value="true" 
+                                       <%= page && page.showInNav ? 'checked' : '' %> 
+                                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="showInNav" class="ml-2 text-sm text-gray-900">Show in navigation menu</label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="navOrder" class="block text-sm font-medium text-gray-700 mb-2">Navigation Order</label>
+                            <input type="number" id="navOrder" name="navOrder" value="<%= page ? page.navOrder : 0 %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. HERO SECTION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-video text-indigo-600 mr-3"></i>
+                        Hero Section (Top Banner)
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="hero_title" class="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
+                            <input type="text" id="hero_title" name="hero[title]" value="<%= page && page.hero ? page.hero.title : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Transform Your Nutrition">
+                        </div>
+                        
+                        <div>
+                            <label for="hero_subtitle" class="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle</label>
+                            <input type="text" id="hero_subtitle" name="hero[subtitle]" value="<%= page && page.hero ? page.hero.subtitle : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Fuel Your Body Right">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <label for="hero_hashtag" class="block text-sm font-medium text-gray-700 mb-2">Hashtag (without #)</label>
+                            <input type="text" id="hero_hashtag" name="hero[hashtag]" value="<%= page && page.hero ? page.hero.hashtag : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="EatHealthy">
+                        </div>
+                        
+                        <div>
+                            <label for="hero_backgroundVideo" class="block text-sm font-medium text-gray-700 mb-2">Background Video</label>
+                            <input type="text" id="hero_backgroundVideo" name="hero[backgroundVideo]" value="<%= page && page.hero ? page.hero.backgroundVideo : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="nutrition-hero.mp4">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label for="hero_description" class="block text-sm font-medium text-gray-700 mb-2">Hero Description</label>
+                        <textarea id="hero_description" name="hero[description]" rows="3" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                  placeholder="Discover the power of proper nutrition..."><%= page && page.hero ? page.hero.description : '' %></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <label for="hero_ctaText" class="block text-sm font-medium text-gray-700 mb-2">CTA Button Text</label>
+                            <input type="text" id="hero_ctaText" name="hero[ctaText]" value="<%= page && page.hero ? page.hero.ctaText : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Start Your Nutrition Journey">
+                        </div>
+                        
+                        <div>
+                            <label for="hero_ctaLink" class="block text-sm font-medium text-gray-700 mb-2">CTA Button Link</label>
+                            <input type="text" id="hero_ctaLink" name="hero[ctaLink]" value="<%= page && page.hero ? page.hero.ctaLink : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="/contact">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="hero[showCTA]" value="true" 
+                                   <%= page && page.hero && page.hero.showCTA ? 'checked' : '' %> 
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <span class="ml-2 text-sm text-gray-900">Show CTA Button</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 3. SERVICES SECTION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-th-large text-indigo-600 mr-3"></i>
+                        Services Section
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="services_sectionTitle" class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                            <input type="text" id="services_sectionTitle" name="services[sectionTitle]" 
+                                   value="<%= page && page.services ? page.services.sectionTitle : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Nutrition Services">
+                        </div>
+                        
+                        <div>
+                            <label for="services_sectionDescription" class="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+                            <input type="text" id="services_sectionDescription" name="services[sectionDescription]" 
+                                   value="<%= page && page.services ? page.services.sectionDescription : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Comprehensive nutrition solutions for every lifestyle">
+                        </div>
+                    </div>
+                    
+                    <!-- Services Items -->
+                    <div id="servicesContainer">
+                        <% for(let i = 1; i <= 8; i++) { %>
+                        <div class="border border-gray-200 rounded-lg p-4 mb-4 service-item" data-service="<%= i %>">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-gray-900">Service <%= i %></h4>
+                                <button type="button" onclick="toggleService('<%= i %>')" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </div>
+                            
+                            <div id="service<%= i %>Content" class="space-y-4 hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                        <input type="text" name="services[items][<%= i-1 %>][title]" 
+                                               value="<%= page && page.services && page.services.items && page.services.items[i-1] ? page.services.items[i-1].title : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                               placeholder="Weight Loss Plans">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                                        <input type="text" name="services[items][<%= i-1 %>][price]" 
+                                               value="<%= page && page.services && page.services.items && page.services.items[i-1] ? page.services.items[i-1].price : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                               placeholder="CHF 120.– per month">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                    <textarea name="services[items][<%= i-1 %>][description]" rows="3" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                              placeholder="Scientifically designed meal plans for sustainable weight loss..."><%= page && page.services && page.services.items && page.services.items[i-1] ? page.services.items[i-1].description : '' %></textarea>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Icon Path</label>
+                                        <input type="text" name="services[items][<%= i-1 %>][icon]" 
+                                               value="<%= page && page.services && page.services.items && page.services.items[i-1] ? page.services.items[i-1].icon : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                               placeholder="/media/weight-loss-icon.png">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Link</label>
+                                        <input type="text" name="services[items][<%= i-1 %>][link]" 
+                                               value="<%= page && page.services && page.services.items && page.services.items[i-1] ? page.services.items[i-1].link : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                               placeholder="/services/weight-loss">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- 4. CONCEPT SECTION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-lightbulb text-indigo-600 mr-3"></i>
+                        Concept/About Section
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="concept_sectionTitle" class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                            <input type="text" id="concept_sectionTitle" name="concept[sectionTitle]" 
+                                   value="<%= page && page.concept ? page.concept.sectionTitle : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Our Nutrition Philosophy">
+                        </div>
+                        
+                        <div>
+                            <label for="concept_mainTitle" class="block text-sm font-medium text-gray-700 mb-2">Main Title</label>
+                            <input type="text" id="concept_mainTitle" name="concept[mainTitle]" 
+                                   value="<%= page && page.concept ? page.concept.mainTitle : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Science-Based Approach">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label for="concept_mainDescription" class="block text-sm font-medium text-gray-700 mb-2">Main Description</label>
+                        <textarea id="concept_mainDescription" name="concept[mainDescription]" rows="4" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                  placeholder="We combine cutting-edge nutritional science with practical, sustainable eating strategies..."><%= page && page.concept ? page.concept.mainDescription : '' %></textarea>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label for="concept_image" class="block text-sm font-medium text-gray-700 mb-2">Concept Image</label>
+                        <input type="text" id="concept_image" name="concept[image]" 
+                               value="<%= page && page.concept ? page.concept.image : '' %>" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                               placeholder="/media/nutrition-concept.jpg">
+                    </div>
+                    
+                    <!-- Concept Features -->
+                    <div class="mt-6">
+                        <h4 class="font-medium text-gray-900 mb-4">Concept Features</h4>
+                        <% for(let i = 1; i <= 4; i++) { %>
+                        <div class="border border-gray-200 rounded-lg p-4 mb-3">
+                            <h5 class="font-medium text-gray-800 mb-2">Feature <%= i %></h5>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                    <input type="text" name="concept[features][<%= i-1 %>][title]" 
+                                           value="<%= page && page.concept && page.concept.features && page.concept.features[i-1] ? page.concept.features[i-1].title : '' %>" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                           placeholder="Personalized Plans">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                                    <input type="text" name="concept[features][<%= i-1 %>][icon]" 
+                                           value="<%= page && page.concept && page.concept.features && page.concept.features[i-1] ? page.concept.features[i-1].icon : '' %>" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                           placeholder="/media/personalized-icon.png">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                    <input type="text" name="concept[features][<%= i-1 %>][description]" 
+                                           value="<%= page && page.concept && page.concept.features && page.concept.features[i-1] ? page.concept.features[i-1].description : '' %>" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                           placeholder="Customized to your goals, preferences, and lifestyle">
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- 5. TEAM SECTION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-users text-indigo-600 mr-3"></i>
+                        Team Section
+                    </h2>
+                    
+                    <div class="mb-6">
+                        <label for="team_sectionTitle" class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                        <input type="text" id="team_sectionTitle" name="team[sectionTitle]" 
+                               value="<%= page && page.team ? page.team.sectionTitle : '' %>" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                               placeholder="Nutrition Experts">
+                    </div>
+                    
+                    <!-- Team Members -->
+                    <% for(let i = 1; i <= 3; i++) { %>
+                    <div class="border border-gray-200 rounded-lg p-4 mb-4">
+                        <h4 class="font-medium text-gray-900 mb-3">Team Member <%= i %></h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input type="text" name="team[members][<%= i-1 %>][name]" 
+                                       value="<%= page && page.team && page.team.members && page.team.members[i-1] ? page.team.members[i-1].name : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="Dr. Lisa Nutritionist">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                                <input type="text" name="team[members][<%= i-1 %>][position]" 
+                                       value="<%= page && page.team && page.team.members && page.team.members[i-1] ? page.team.members[i-1].position : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="Lead Nutritionist">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                            <textarea name="team[members][<%= i-1 %>][bio]" rows="2" 
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                      placeholder="PhD in Nutritional Science with 8 years of clinical experience..."><%= page && page.team && page.team.members && page.team.members[i-1] ? page.team.members[i-1].bio : '' %></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                                <input type="text" name="team[members][<%= i-1 %>][image]" 
+                                       value="<%= page && page.team && page.team.members && page.team.members[i-1] ? page.team.members[i-1].image : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="/media/nutritionist.jpg">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
+                                <input type="text" name="team[members][<%= i-1 %>][social][linkedin]" 
+                                       value="<%= page && page.team && page.team.members && page.team.members[i-1] && page.team.members[i-1].social ? page.team.members[i-1].social.linkedin : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="https://linkedin.com/in/lisa-nutritionist">
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- 6. BENEFITS SECTION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-star text-indigo-600 mr-3"></i>
+                        Benefits Section
+                    </h2>
+                    
+                    <div class="mb-6">
+                        <label for="benefits_sectionTitle" class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                        <input type="text" id="benefits_sectionTitle" name="benefits[sectionTitle]" 
+                               value="<%= page && page.benefits ? page.benefits.sectionTitle : '' %>" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                               placeholder="Benefits of Proper Nutrition">
+                    </div>
+                    
+                    <!-- Benefits Items -->
+                    <% for(let i = 1; i <= 4; i++) { %>
+                    <div class="border border-gray-200 rounded-lg p-4 mb-3">
+                        <h4 class="font-medium text-gray-900 mb-3">Benefit <%= i %></h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                <input type="text" name="benefits[items][<%= i-1 %>][title]" 
+                                       value="<%= page && page.benefits && page.benefits.items && page.benefits.items[i-1] ? page.benefits.items[i-1].title : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="Increased Energy">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                                <input type="text" name="benefits[items][<%= i-1 %>][icon]" 
+                                       value="<%= page && page.benefits && page.benefits.items && page.benefits.items[i-1] ? page.benefits.items[i-1].icon : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="/media/energy-icon.png">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <input type="text" name="benefits[items][<%= i-1 %>][description]" 
+                                       value="<%= page && page.benefits && page.benefits.items && page.benefits.items[i-1] ? page.benefits.items[i-1].description : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="Feel more energetic throughout the day">
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- 7. FAQ SECTION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-question-circle text-indigo-600 mr-3"></i>
+                        FAQ Section
+                    </h2>
+                    
+                    <div class="mb-6">
+                        <label for="faq_sectionTitle" class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                        <input type="text" id="faq_sectionTitle" name="faq[sectionTitle]" 
+                               value="<%= page && page.faq ? page.faq.sectionTitle : '' %>" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                               placeholder="Nutrition FAQ">
+                    </div>
+                    
+                    <!-- FAQ Items -->
+                    <% for(let i = 1; i <= 5; i++) { %>
+                    <div class="border border-gray-200 rounded-lg p-4 mb-3">
+                        <h4 class="font-medium text-gray-900 mb-3">FAQ <%= i %></h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Question</label>
+                                <input type="text" name="faq[items][<%= i-1 %>][question]" 
+                                       value="<%= page && page.faq && page.faq.items && page.faq.items[i-1] ? page.faq.items[i-1].question : '' %>" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                       placeholder="How quickly will I see results?">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Answer</label>
+                                <textarea name="faq[items][<%= i-1 %>][answer]" rows="2" 
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                          placeholder="Most clients notice increased energy within 1-2 weeks..."><%= page && page.faq && page.faq.items && page.faq.items[i-1] ? page.faq.items[i-1].answer : '' %></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- 8. CONTACT SECTION -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-envelope text-indigo-600 mr-3"></i>
+                        Contact Section
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="contact_sectionTitle" class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                            <input type="text" id="contact_sectionTitle" name="contact[sectionTitle]" 
+                                   value="<%= page && page.contact ? page.contact.sectionTitle : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="Start Your Nutrition Journey">
+                        </div>
+                        
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="contact[showContactForm]" value="true" 
+                                       <%= page && page.contact && page.contact.showContactForm ? 'checked' : '' %> 
+                                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-sm text-gray-900">Show Contact Form</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <label for="contact_phone" class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                            <input type="text" id="contact_phone" name="contact[contactInfo][phone]" 
+                                   value="<%= page && page.contact && page.contact.contactInfo ? page.contact.contactInfo.phone : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="+41 61 123 45 67">
+                        </div>
+                        
+                        <div>
+                            <label for="contact_email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="contact_email" name="contact[contactInfo][email]" 
+                                   value="<%= page && page.contact && page.contact.contactInfo ? page.contact.contactInfo.email : '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   placeholder="nutrition@mca-basel.ch">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end space-x-4 pt-6">
+                    <a href="/admin/pages" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition duration-200">
+                        Cancel
+                    </a>
+                    <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition duration-200">
+                        <i class="fas fa-save mr-2"></i>
+                        <% if (isEdit) { %>
+                            Update Page
+                        <% } else { %>
+                            Create Page
+                        <% } %>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Auto-generate slug from title
+        document.getElementById('title').addEventListener('input', function() {
+            const title = this.value;
+            const slug = title.toLowerCase()
+                .replace(/[^a-z0-9 -]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+            document.getElementById('slug').value = slug;
+        });
+
+        // Toggle service sections
+        function toggleService(serviceNumber) {
+            const content = document.getElementById(`service${serviceNumber}Content`);
+            const icon = content.previousElementSibling.querySelector('i');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Form submission handler
+        document.getElementById('pageForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            
+            // Show loading
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+            
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                    successMsg.innerHTML = '<i class="fas fa-check mr-2"></i>Page saved successfully!';
+                    document.body.appendChild(successMsg);
+                    
+                    // Redirect to page list after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/admin/pages';
+                    }, 2000);
+                } else {
+                    throw new Error(result.message || 'Failed to save page');
+                }
+            } catch (error) {
+                console.error('Error saving page:', error);
+                
+                // Show error message
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Error saving page: ' + error.message;
+                document.body.appendChild(errorMsg);
+                
+                // Remove error message after 5 seconds
+                setTimeout(() => {
+                    errorMsg.remove();
+                }, 5000);
+            }
+            
+            // Reset button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        });
+    </script>
+</body>
+</html>
+                        </div>
+
+                        <!-- Hero Section -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-6">Hero Section</h2>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="heroTitle" class="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
+                                    <input type="text" id="heroTitle" name="hero[title]" value="<%= page && page.hero ? page.hero.title : '' %>" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="heroSubtitle" class="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle</label>
+                                    <input type="text" id="heroSubtitle" name="hero[subtitle]" value="<%= page && page.hero ? page.hero.subtitle : '' %>" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="heroDescription" class="block text-sm font-medium text-gray-700 mb-2">Hero Description</label>
+                                    <textarea id="heroDescription" name="hero[description]" rows="3" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"><%= page && page.hero ? page.hero.description : '' %></textarea>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="heroBackgroundImage" class="block text-sm font-medium text-gray-700 mb-2">Background Image URL</label>
+                                        <input type="text" id="heroBackgroundImage" name="hero[backgroundImage]" value="<%= page && page.hero ? page.hero.backgroundImage : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="heroBackgroundVideo" class="block text-sm font-medium text-gray-700 mb-2">Background Video URL</label>
+                                        <input type="text" id="heroBackgroundVideo" name="hero[backgroundVideo]" value="<%= page && page.hero ? page.hero.backgroundVideo : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="heroCtaText" class="block text-sm font-medium text-gray-700 mb-2">Call-to-Action Text</label>
+                                        <input type="text" id="heroCtaText" name="hero[ctaText]" value="<%= page && page.hero ? page.hero.ctaText : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="heroCtaLink" class="block text-sm font-medium text-gray-700 mb-2">Call-to-Action Link</label>
+                                        <input type="text" id="heroCtaLink" name="hero[ctaLink]" value="<%= page && page.hero ? page.hero.ctaLink : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="heroShowCTA" name="hero[showCTA]" value="true" 
+                                           <%= page && page.hero && page.hero.showCTA ? 'checked' : '' %> 
+                                           class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="heroShowCTA" class="ml-2 text-sm text-gray-900">Show Call-to-Action Button</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Section -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-6">Contact Section</h2>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="contactTitle" class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                                    <input type="text" id="contactTitle" name="contact[sectionTitle]" value="<%= page && page.contact ? page.contact.sectionTitle : '' %>" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="contactDescription" class="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+                                    <textarea id="contactDescription" name="contact[sectionDescription]" rows="3" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"><%= page && page.contact ? page.contact.sectionDescription : '' %></textarea>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="showContactForm" name="contact[showContactForm]" value="true" 
+                                           <%= page && page.contact && page.contact.showContactForm !== false ? 'checked' : '' %> 
+                                           class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="showContactForm" class="ml-2 text-sm text-gray-900">Show Contact Form</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Page Settings -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-6">Page Settings</h2>
+                            
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="showHeader" name="settings[showHeader]" value="true" 
+                                               <%= page && page.settings && page.settings.showHeader !== false ? 'checked' : 'checked' %> 
+                                               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="showHeader" class="ml-2 text-sm text-gray-900">Show Header/Navigation</label>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="showFooter" name="settings[showFooter]" value="true" 
+                                               <%= page && page.settings && page.settings.showFooter !== false ? 'checked' : 'checked' %> 
+                                               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="showFooter" class="ml-2 text-sm text-gray-900">Show Footer</label>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="customCSS" class="block text-sm font-medium text-gray-700 mb-2">Custom CSS</label>
+                                    <textarea id="customCSS" name="settings[customCSS]" rows="6" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm" 
+                                              placeholder="/* Add custom CSS for this page */"><%= page && page.settings ? page.settings.customCSS : '' %></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label for="customJS" class="block text-sm font-medium text-gray-700 mb-2">Custom JavaScript</label>
+                                    <textarea id="customJS" name="settings[customJS]" rows="6" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm" 
+                                              placeholder="// Add custom JavaScript for this page"><%= page && page.settings ? page.settings.customJS : '' %></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <% if (isEdit) { %>
+                                    <a href="/page/<%= page.slug %>" target="_blank" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fas fa-external-link-alt mr-2"></i>Preview Page
+                                    </a>
+                                    <% } %>
+                                </div>
+                                
+                                <div class="flex space-x-4">
+                                    <a href="/admin/pages" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-200">
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">
+                                        <i class="fas fa-save mr-2"></i>
+                                        <%= isEdit ? 'Update Page' : 'Create Page' %>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Auto-generate slug from title
+        document.getElementById('title').addEventListener('input', function() {
+            const title = this.value;
+            const slug = title.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+                .replace(/\s+/g, '-') // Replace spaces with hyphens
+                .replace(/-+/g, '-') // Replace multiple hyphens with single
+                .trim('-'); // Remove leading/trailing hyphens
+            
+            // Only auto-generate if slug field is empty or wasn't manually edited
+            const slugField = document.getElementById('slug');
+            if (!slugField.dataset.manuallyEdited) {
+                slugField.value = slug;
+            }
+        });
+
+        // Track manual slug editing
+        document.getElementById('slug').addEventListener('input', function() {
+            this.dataset.manuallyEdited = 'true';
+        });
+
+        // Handle form submission
+        document.getElementById('pageForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+            
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Redirect to pages list
+                    window.location.href = '/admin/pages';
+                } else {
+                    alert('Error saving page: ' + result.message);
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-save mr-2"></i><%= isEdit ? "Update Page" : "Create Page" %>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving page. Please try again.');
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-save mr-2"></i><%= isEdit ? "Update Page" : "Create Page" %>';
+            }
+        });
+    </script>
+</body>
+</html>

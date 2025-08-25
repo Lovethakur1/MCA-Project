@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - MCA Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <%- include('partials/sidebar') %>
+        
+        <!-- Main Content -->
+        <div class="flex-1 ml-64">
+            <!-- Top Navigation -->
+            <%- include('partials/header') %>
+            
+            <!-- Page Content -->
+            <main class="p-6">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Page Header -->
+                    <div class="mb-8 flex justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900"><%= title %></h1>
+                            <p class="text-gray-600 mt-2">Create and manage dynamic pages for your website</p>
+                        </div>
+                        <a href="/admin/pages/new" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Create New Page
+                        </a>
+                    </div>
+
+                    <!-- Pages List -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="p-6">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full table-auto">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Title</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Slug</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Show in Nav</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Created</th>
+                                            <th class="text-center py-3 px-4 font-semibold text-gray-700">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (pages && pages.length > 0) { %>
+                                            <% pages.forEach(page => { %>
+                                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                                <td class="py-4 px-4">
+                                                    <div class="font-medium text-gray-900"><%= page.title %></div>
+                                                    <% if (page.metaDescription) { %>
+                                                    <div class="text-sm text-gray-500 mt-1"><%= page.metaDescription.substring(0, 100) %><% if (page.metaDescription.length > 100) { %>...<% } %></div>
+                                                    <% } %>
+                                                </td>
+                                                <td class="py-4 px-4">
+                                                    <code class="bg-gray-100 px-2 py-1 rounded text-sm">/<%= page.slug %></code>
+                                                </td>
+                                                <td class="py-4 px-4">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                        <%= page.status === 'active' ? 'bg-green-100 text-green-800' : 
+                                                            page.status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 
+                                                            'bg-gray-100 text-gray-800' %>">
+                                                        <%= page.status.charAt(0).toUpperCase() + page.status.slice(1) %>
+                                                    </span>
+                                                </td>
+                                                <td class="py-4 px-4">
+                                                    <% if (page.showInNav) { %>
+                                                        <span class="text-green-600"><i class="fas fa-check"></i> Yes</span>
+                                                    <% } else { %>
+                                                        <span class="text-gray-400"><i class="fas fa-times"></i> No</span>
+                                                    <% } %>
+                                                </td>
+                                                <td class="py-4 px-4 text-sm text-gray-500">
+                                                    <%= new Date(page.createdAt).toLocaleDateString() %>
+                                                </td>
+                                                <td class="py-4 px-4 text-center">
+                                                    <div class="flex justify-center space-x-2">
+                                                        <!-- View Page -->
+                                                        <a href="/page/<%= page.slug %>" target="_blank" 
+                                                           class="text-blue-600 hover:text-blue-800 transition duration-200" 
+                                                           title="View Page">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        
+                                                        <!-- Edit Page -->
+                                                        <a href="/admin/pages/<%= page._id %>/edit" 
+                                                           class="text-indigo-600 hover:text-indigo-800 transition duration-200" 
+                                                           title="Edit Page">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        
+                                                        <!-- Delete Page -->
+                                                        <button onclick="deletePage('<%= page._id %>', '<%= page.title %>')" 
+                                                                class="text-red-600 hover:text-red-800 transition duration-200" 
+                                                                title="Delete Page">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="6" class="py-8 px-4 text-center text-gray-500">
+                                                    <div class="text-center">
+                                                        <i class="fas fa-file-alt text-4xl text-gray-300 mb-4"></i>
+                                                        <p class="text-lg font-medium text-gray-900 mb-2">No pages yet</p>
+                                                        <p class="text-gray-500 mb-4">Create your first dynamic page to get started.</p>
+                                                        <a href="/admin/pages/new" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                                                            <i class="fas fa-plus mr-2"></i>Create Page
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Total Pages</dt>
+                                        <dd class="text-lg font-medium text-gray-900"><%= pages.length %></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-eye text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Active Pages</dt>
+                                        <dd class="text-lg font-medium text-gray-900"><%= pages.filter(p => p.status === 'active').length %></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-bars text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">In Navigation</dt>
+                                        <dd class="text-lg font-medium text-gray-900"><%= pages.filter(p => p.showInNav).length %></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        async function deletePage(pageId, pageTitle) {
+            if (confirm(`Are you sure you want to delete the page "${pageTitle}"? This action cannot be undone.`)) {
+                try {
+                    const response = await fetch(`/admin/pages/${pageId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Reload the page to show updated list
+                        window.location.reload();
+                    } else {
+                        alert('Error deleting page: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error deleting page. Please try again.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

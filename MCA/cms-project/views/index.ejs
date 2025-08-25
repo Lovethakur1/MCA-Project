@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCA</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <%- include('partials/navbar') %>
+
+    <!-- HERO SECTION  -->
+
+    <section class="hero-section">
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="/media/<%= hero.backgroundVideo || 'homebackground.mp4' %>" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- <% if (hero && (hero.title || hero.subtitle || hero.description || hero.buttonText)) { %>
+        <div class="hero-content">
+            <% if (hero.hashtag) { %>
+            <h1 class="hashtag">#<%= hero.hashtag %></h1>
+            <% } %>
+            <% if (hero.title) { %>
+            <h2><%= hero.title %></h2>
+            <% } %>
+            <% if (hero.description) { %>
+            <p><%= hero.description %></p>
+            <% } %>
+            <% if (hero.buttonText && hero.buttonLink) { %>
+            <a href="<%= hero.buttonLink %>" class="hero-btn"><%= hero.buttonText %></a>
+            <% } %>
+        </div>
+        <% } %> -->
+    </section>
+
+    <!-- SERVICES SECTION  -->
+
+    <section class="homegym-section">
+        <div class="homegym-container">
+            <% if (services && services.sectionTitle) { %>
+            <div class="section-header text-center">
+                <h2><%= services.sectionTitle %></h2>
+                <% if (services.sectionSubtitle) { %>
+                <p><%= services.sectionSubtitle %></p>
+                <% } %>
+            </div>
+            <% } %>
+            
+            <div class="homegym-cards-grid">
+                <% 
+                // Define default services if no CMS content
+                const defaultServices = [
+                    {
+                        title: 'Personal Training',
+                        description: 'Train exclusively, benefit optimally: Your personal 1:1 coaching with a clear focus on your goals. Our holistic approach promotes the harmony of body and mind – for greater well-being and sustainable success.',
+                        price: 'CHF 150.– per hour',
+                        icon: '/media/Symbol.png',
+                        link: '#'
+                    },
+                    {
+                        title: 'Partner Personal Training', 
+                        description: 'Train together with your partner – your individual goals take center stage. Even during joint training, personalized guidance remains top-tier.',
+                        price: 'CHF 250.– per hour',
+                        icon: '/media/myimage.png.png',
+                        link: '#'
+                    },
+                    {
+                        title: 'Senior Personal Training',
+                        description: 'Targeted personal training for seniors – so you can remain independent and self-reliant as long as possible. Our goal: Preserve and strategically enhance your quality of life.',
+                        price: 'CHF 150.– per hour', 
+                        icon: '/media/Symbol (1).png',
+                        link: '#'
+                    },
+                    {
+                        title: 'Domicile Personal Training',
+                        description: 'Domizil Personal Training is designed for those who prefer to train in a nature or their own home gym, as well as seniors for whom visiting a private studio isn\'t an option.',
+                        price: 'CHF 180.– per hour',
+                        icon: '/media/home-1_svgrepo.com.png', 
+                        link: '#'
+                    },
+                    {
+                        title: 'Health-Coaching',
+                        description: 'Here, we address sleep, nutrition, recovery, and training, set clear goals, analyze your health status, and create your personalized plan – for sustainable success.',
+                        price: 'CHF 200.– per hour',
+                        icon: '/media/Symbol (2).png',
+                        link: '#'
+                    }
+                ];
+
+                // Use CMS services if available, otherwise use defaults
+                let servicesList = [];
+                if (services && services.service1_title) {
+                    // Build services from CMS data
+                    for (let i = 1; i <= 5; i++) {
+                        if (services[`service${i}_title`]) {
+                            // Handle icon path - add /media/ prefix if it's just a filename
+                            let iconPath = services[`service${i}_icon`] || 'Symbol.png';
+                            if (iconPath && !iconPath.startsWith('/') && !iconPath.startsWith('http')) {
+                                iconPath = '/media/' + iconPath;
+                            }
+                            
+                            servicesList.push({
+                                title: services[`service${i}_title`],
+                                description: services[`service${i}_description`] || '',
+                                price: services[`service${i}_price`] || '',
+                                icon: iconPath,
+                                link: services[`service${i}_link`] || '#'
+                            });
+                        }
+                    }
+                } else {
+                    servicesList = defaultServices;
+                }
+                %>
+
+                <% servicesList.forEach(service => { %>
+                <div class="homegym-card">
+                    <div class="homegym-icon"><img src="<%= service.icon %>"></div>
+                    <h3 class="homegym-card-title"><%= service.title %></h3>
+                    <p class="homegym-card-description"><%= service.description %></p>
+                    <% if (service.price) { %>
+                    <div class="homegym-price"><%= service.price %></div>
+                    <% } %>
+                    <a href="<%= service.link %>" class="homegym-btn">More Information</a>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team SECTION  -->
+
+    <section class="team-section">
+        <div class="team-container">
+
+            <div class="team-text">
+                <p class="subtitle"><%= about && about.subtitle ? about.subtitle : 'THIS IS US' %></p>
+                <h2><%= about && about.title ? about.title : 'THIS TEAM HAS ONE GOAL: YOUR SUCCESS' %></h2>
+                <div class="team-buttons">
+                    <a href="<%= about && about.primaryButtonLink ? about.primaryButtonLink : '#' %>" class="team-btn primary">
+                        <%= about && about.primaryButtonText ? about.primaryButtonText : 'Free Initial Consultation' %>
+                    </a>
+                    <a href="<%= about && about.secondaryButtonLink ? about.secondaryButtonLink : '#' %>" class="team-btn secondary">
+                        <%= about && about.secondaryButtonText ? about.secondaryButtonText : 'Explore Careers' %>
+                    </a>
+                </div>
+            </div>
+
+            <div class="team-members">
+                <%
+                // Build team members from CMS data
+                let teamMembersList = [];
+
+             
+
+                // First check in the 'team' section (new structure)
+                if (typeof contentData !== 'undefined' && contentData && contentData.team) {
+                    for (let i = 1; i <= 10; i++) {
+                        if (contentData.team[`member${i}_name`]) {
+                            let photoPath = contentData.team[`member${i}_photo`] || 'default-avatar.jpg';
+                            if (photoPath && !photoPath.startsWith('/') && !photoPath.startsWith('http')) {
+                                photoPath = '/media/' + photoPath;
+                            }
+                            
+                            teamMembersList.push({
+                                name: contentData.team[`member${i}_name`],
+                                position: contentData.team[`member${i}_position`] || '',
+                                photo: photoPath,
+                                bio: contentData.team[`member${i}_bio`] || '',
+                                email: contentData.team[`member${i}_email`] || '',
+                                phone: contentData.team[`member${i}_phone`] || '',
+                                social_linkedin: contentData.team[`member${i}_social_linkedin`] || '',
+                                social_instagram: contentData.team[`member${i}_social_instagram`] || ''
+                            });
+                        }
+                    }
+                }
+                
+                // Fallback: check in 'about' section (legacy)
+                if (teamMembersList.length === 0 && about) {
+                    for (let i = 1; i <= 10; i++) {
+                        if (about[`member${i}_name`]) {
+                            let photoPath = about[`member${i}_photo`] || 'default-avatar.jpg';
+                            if (photoPath && !photoPath.startsWith('/') && !photoPath.startsWith('http')) {
+                                photoPath = '/media/' + photoPath;
+                            }
+                            
+                            teamMembersList.push({
+                                name: about[`member${i}_name`],
+                                position: about[`member${i}_position`] || '',
+                                photo: photoPath,
+                                bio: about[`member${i}_bio`] || '',
+                                email: about[`member${i}_email`] || '',
+                                phone: about[`member${i}_phone`] || '',
+                                social_linkedin: about[`member${i}_social_linkedin`] || '',
+                                social_instagram: about[`member${i}_social_instagram`] || ''
+                            });
+                        }
+                    }
+                }
+                
+                // If still no team members, use defaults
+                if (teamMembersList.length === 0) {
+                    teamMembersList = [
+                        { name: 'MALTE PRIMUS', position: 'Co-Founder & Head Coach', photo: '/media/malte.jpg', bio: '', email: '', phone: '', social_linkedin: '', social_instagram: '' },
+                        { name: 'MAX BARDE', position: 'Co-Founder & Head Coach', photo: '/media/max.jpg', bio: '', email: '', phone: '', social_linkedin: '', social_instagram: '' }
+                    ];
+                }
+                
+                teamMembersList.forEach(member => {
+                %>
+                <div class="team-member">
+                    <img src="<%= member.photo %>" alt="<%= member.name %>">
+                    <h3><%= member.name %></h3>
+                    <p><%= member.position %></p>
+                    <% if (member.bio) { %>
+                    <div class="member-bio">
+                        <p><%= member.bio %></p>
+                    </div>
+                    <% } %>
+                    <% if (member.social_linkedin || member.social_instagram) { %>
+                    <div class="member-social">
+                        <% if (member.social_linkedin) { %>
+                        <a href="<%= member.social_linkedin %>" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <% } %>
+                        <% if (member.social_instagram) { %>
+                        <a href="<%= member.social_instagram %>" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <% } %>
+                    </div>
+                    <% } %>
+                </div>
+                <% }); %>
+            </div>
+            
+
+        </div>
+    </section>
+
+    <!-- CONCEPT SECTION  -->
+
+    <section class="concept-section">
+        <div class="concept-container">
+            <% 
+            // Get concept data from CMS or use defaults
+            const concept = contentData && contentData.concept ? contentData.concept : {};
+            
+            // Default values
+            const defaultConcept = {
+                subtitle: 'THE MCQ CONCEPT',
+                title: 'PERSONALIZATION LEADS TO RESULTS',
+                description: 'Don\'t talk, get things done. Our goals are measurable, and the impact is noticeable in everyday life. Customer support that doesn\'t end after training. We want you to feel more energetic, sleep better, and integrate optimal nutrition into your daily routine. The expertise of our qualified trainers makes this possible.',
+                feature1_icon: '/media/Icon-Team-five-stars.svg.png',
+                feature1_title: 'YOUR TEAM OF EXPERTS',
+                feature1_text: 'Never stand still. Combined knowledge from over 10 academic degrees, over 100 seminars, tens of thousands of hours of personal training, and a focus on various areas of expertise, all with a consistent foundation.',
+                feature2_icon: '/media/Icon-Space.svg.png',
+                feature2_title: 'THE PERFECT PLACE',
+                feature2_text: 'More than just a gym. We trainers are like a family, and our clients also value the MTM Gym as a place with a positive vibe. A good body image and enjoyment of the program are just as important as consistent training.',
+                feature3_icon: '/media/Icon-Monitoring.svg.png',
+                feature3_title: 'REGULAR CHECK-UPS',
+                feature3_text: 'A medical history is taken every 4 weeks according to standard practice. Data on your physical development and nutritional biomarkers form the basis for adjustments to your plan.',
+                feature4_icon: '/media/Icon-Training.svg.png',
+                feature4_title: 'PERIODIZED TRAINING ROUTINE',
+                feature4_text: 'Periodized training based on sports science and your assessment. The MTM program uses varying intensity cycles to improve your performance over the long term.'
+            };
+            
+            // Merge with CMS data
+            const finalConcept = { ...defaultConcept, ...concept };
+            %>
+            
+            <p class="concept-subtitle"><%= finalConcept.subtitle %></p>
+            <h2 class="concept-title"><%= finalConcept.title %></h2>
+            <p class="concept-description">
+                <%= finalConcept.description %>
+            </p>
+
+            <div class="concept-features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <img src="<%= finalConcept.feature1_icon.startsWith('/') ? finalConcept.feature1_icon : '/media/' + finalConcept.feature1_icon %>">
+                    </div>
+                    <h3 class="feature-title"><%= finalConcept.feature1_title %></h3>
+                    <p class="feature-text">
+                        <%= finalConcept.feature1_text %>
+                    </p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <img src="<%= finalConcept.feature2_icon.startsWith('/') ? finalConcept.feature2_icon : '/media/' + finalConcept.feature2_icon %>">
+                    </div>
+                    <h3 class="feature-title"><%= finalConcept.feature2_title %></h3>
+                    <p class="feature-text">
+                        <%= finalConcept.feature2_text %>
+                    </p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <img src="<%= finalConcept.feature3_icon.startsWith('/') ? finalConcept.feature3_icon : '/media/' + finalConcept.feature3_icon %>">
+                    </div>
+                    <h3 class="feature-title"><%= finalConcept.feature3_title %></h3>
+                    <p class="feature-text">
+                        <%= finalConcept.feature3_text %>
+                    </p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <img src="<%= finalConcept.feature4_icon.startsWith('/') ? finalConcept.feature4_icon : '/media/' + finalConcept.feature4_icon %>">
+                    </div>
+                    <h3 class="feature-title"><%= finalConcept.feature4_title %></h3>
+                    <p class="feature-text">
+                        <%= finalConcept.feature4_text %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIAL SECTION  -->
+
+    <section class="reviews-section">
+        <div class="reviews-container">
+            <% 
+            // Get testimonial section data from CMS or use defaults
+            const testimonials = contentData && contentData.testimonials ? contentData.testimonials : {};
+            
+            // Default values for section header
+            const defaultTestimonialData = {
+                heading: 'Global Personal Training Client Reviews',
+                subheading: 'See what more than 7,500 of our clients across the globe say',
+                rating: '4.9 ★★★★★',
+                count: 'Based on (7,500+)'
+            };
+            
+            // Merge with CMS data
+            const finalTestimonialData = { ...defaultTestimonialData, ...testimonials };
+            
+            // Build testimonials list from CMS or defaults
+            let testimonialsList = [];
+            
+            // First, try to get testimonials from CMS content
+            if (testimonials) {
+                for (let i = 1; i <= 10; i++) {
+                    if (testimonials[`testimonial${i}_name`]) {
+                        testimonialsList.push({
+                            name: testimonials[`testimonial${i}_name`],
+                            stars: testimonials[`testimonial${i}_stars`] || '★★★★★',
+                            text: testimonials[`testimonial${i}_text`] || '',
+                            link: testimonials[`testimonial${i}_link`] || '#',
+                            linkText: testimonials[`testimonial${i}_link_text`] || 'Full review'
+                        });
+                    }
+                }
+            }
+            
+            // If no CMS testimonials, use database testimonials or defaults
+            if (testimonialsList.length === 0) {
+                if (featuredTestimonials && featuredTestimonials.length > 0) {
+                    // Use testimonials from database
+                    featuredTestimonials.forEach(testimonial => {
+                        const stars = '★'.repeat(testimonial.rating || 5) + '☆'.repeat(5 - (testimonial.rating || 5));
+                        testimonialsList.push({
+                            name: testimonial.name,
+                            stars: stars,
+                            text: testimonial.content,
+                            link: '#',
+                            linkText: 'Full review'
+                        });
+                    });
+                } else {
+                    // Use default testimonials
+                    testimonialsList = [
+                        {
+                            name: 'Rodrigo Maciel (London - City)',
+                            stars: '★★★★★',
+                            text: 'Joining UP is the best investment I have ever made. I\'ve achieved results which, after years of hard training and healthy eating, I never thought my body was capable of. I\'ve gained so much from this process, I\'m more educated...',
+                            link: '#',
+                            linkText: 'Full review on Google'
+                        },
+                        {
+                            name: 'Sarah Johnson (New York)',
+                            stars: '★★★★★',
+                            text: 'The personalized approach at MCA has transformed my life. The trainers are incredibly knowledgeable and supportive. I\'ve never felt stronger or more confident.',
+                            link: '#',
+                            linkText: 'Full review on Google'
+                        },
+                        {
+                            name: 'Michael Chen (Los Angeles)',
+                            stars: '★★★★★',
+                            text: 'Outstanding results in just 3 months! The team at MCA created a perfect program for my goals. Highly recommend their professional approach.',
+                            link: '#',
+                            linkText: 'Full review on Google'
+                        }
+                    ];
+                }
+            }
+            %>
+            
+            <h2 class="reviews-heading"><%= finalTestimonialData.heading %></h2>
+            <p class="reviews-subheading">
+                <%= finalTestimonialData.subheading %>
+            </p>
+            <div class="reviews-rating">
+                <span class="rating-score"><%= finalTestimonialData.rating %></span>
+                <p class="rating-count"><%= finalTestimonialData.count %></p>
+            </div>
+
+            <div class="reviews-slider-wrapper">
+                <button class="arrow-btn left-arrow">&larr;</button>
+
+                <div class="reviews-slider">
+                    <% testimonialsList.forEach(testimonial => { %>
+                    <div class="testimonial">
+                        <h3><%= testimonial.name %></h3>
+                        <p class="stars"><%= testimonial.stars %></p>
+                        <p class="text">
+                            <%= testimonial.text %>
+                        </p>
+                        <a href="<%= testimonial.link %>"><%= testimonial.linkText %></a>
+                    </div>
+                    <% }); %>
+                </div>
+
+                <button class="arrow-btn right-arrow">&rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT FORM  -->
+
+    <div class="contactsection" id="contact">
+
+        <div class="contactleft">
+            <% 
+            // Get contact data from CMS or use defaults
+            const contact = contentData && contentData.contact ? contentData.contact : {};
+            
+            // Default values
+            const defaultContact = {
+                title: 'GET IN TOUCH <br> FOR A <span>INITIAL <br> CONSULTATION</span>',
+                highlighted: 'INITIAL <br> CONSULTATION'
+            };
+            
+            // Merge with CMS data
+            const finalContact = { ...defaultContact, ...contact };
+            %>
+            <h4><%- finalContact.title %></h4>
+        </div>
+        <div class="contactright">
+            <!-- AJAX Success/Error Messages -->
+            <div id="contact-message" style="display: none; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <i id="contact-icon"></i>
+                <span id="contact-text"></span>
+            </div>
+
+            <!-- Success/Error Messages (for non-AJAX fallback) -->
+            <% if (typeof query !== 'undefined' && query.contact === 'success') { %>
+            <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                <i class="fa fa-check-circle"></i> Thank you! Your message has been sent successfully. We'll get back to you soon.
+            </div>
+            <% } else if (typeof query !== 'undefined' && query.contact === 'error') { %>
+            <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <i class="fa fa-exclamation-triangle"></i> Sorry, there was an error sending your message. Please try again.
+            </div>
+            <% } %>
+
+            <form id="contact-form" method="POST" action="/contact">
+                <label>Your name</label>
+                <input type="text" name="name" required>
+
+                <label>Phone Number</label>
+                <input type="text" name="phone" required>
+
+                <label>Email Address</label>
+                <input type="email" name="email" required>
+
+                <label>Service Type</label>
+                <select name="service">
+                    <% 
+                    // Dynamically populate service options from services data
+                    if (services && services.service1_title) {
+                        for (let i = 1; i <= 5; i++) {
+                            if (services[`service${i}_title`]) {
+                    %>
+                    <option><%= services[`service${i}_title`] %></option>
+                    <% 
+                            }
+                        }
+                    } else {
+                        // Default options
+                    %>
+                    <option>Personal Training</option>
+                    <option>Partner Personal Training</option>
+                    <option>Senior Personal Training</option>
+                    <option>Domicile Personal Training</option>
+                    <option>Health Coaching</option>
+                    <% } %>
+                </select>
+
+                <label>Your Message</label>
+                <textarea name="message" required></textarea>
+
+                <button type="submit" id="contact-submit-btn">
+                    <i class="fa fa-paper-plane"></i> 
+                    <span id="btn-text">Send Message</span>
+                    <span id="btn-loading" style="display: none;">
+                        <i class="fa fa-spinner fa-spin"></i> Sending...
+                    </span>
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- BENEFITS SECTION  -->
+
+    <div class="benefit">
+        <% 
+        // Get benefits data from CMS or use defaults
+        const benefits = contentData && contentData.benefits ? contentData.benefits : {};
+        
+        // Default values
+        const defaultBenefits = {
+            benefit1_title: 'Discover your benefits',
+            benefit1_description: 'The key to a strong body and a happy mind: from couch potato to fitness superhero - the impressive changes your body can undergo with regular training!',
+            benefit1_button_text: 'More information',
+            benefit1_button_link: '#',
+            benefit2_title: 'Discover your benefits',
+            benefit2_description: 'The key to a strong body and a happy mind: from couch potato to fitness superhero - the impressive changes your body can undergo with regular training!',
+            benefit2_button_text: 'More information',
+            benefit2_button_link: '#'
+        };
+        
+        // Merge with CMS data
+        const finalBenefits = { ...defaultBenefits, ...benefits };
+        %>
+        
+        <div class="beneleft">
+            <h4><%= finalBenefits.benefit1_title %></h4>
+            <p><%= finalBenefits.benefit1_description %></p>
+            <% if (finalBenefits.benefit1_button_text) { %>
+            <a href="<%= finalBenefits.benefit1_button_link || '#' %>">
+                <button><%= finalBenefits.benefit1_button_text %></button>
+            </a>
+            <% } %>
+        </div>
+        <div class="beneright">
+            <h4><%= finalBenefits.benefit2_title %></h4>
+            <p><%= finalBenefits.benefit2_description %></p>
+            <% if (finalBenefits.benefit2_button_text) { %>
+            <a href="<%= finalBenefits.benefit2_button_link || '#' %>">
+                <button><%= finalBenefits.benefit2_button_text %></button>
+            </a>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- FAQ SECTION  -->
+
+    <section class="faq-section">
+        <% 
+        // Get FAQ data from CMS or use defaults
+        const faq = contentData && contentData.faq ? contentData.faq : {};
+        
+        // Default FAQ data
+        const defaultFAQs = [
+            {
+                question: 'I need consultation about the prices of MCA\'s services?',
+                answer: 'Our prices depend on your goals. Contact us for a personalized quote and free consultation.'
+            },
+            {
+                question: 'As a beginner, how can I find out which workout program is right for me?',
+                answer: 'Our trainers offer an initial assessment to design a program tailored to your needs and experience level.'
+            },
+            {
+                question: 'Is my membership card valid for use at all MCA facilities?',
+                answer: 'Yes! MCA memberships give you access to all our nationwide facilities.'
+            },
+            {
+                question: 'What are MCA\'s operating hours?',
+                answer: 'Most MCA locations are open 6AM-10PM Monday to Saturday, and 8AM-8PM on Sunday.'
+            },
+            {
+                question: 'Does MCA offer childcare services?',
+                answer: 'Yes, select locations have childcare available during peak hours. Please check with your local gym.'
+            }
+        ];
+        
+        // Build FAQ list from CMS or defaults
+        let faqList = [];
+        
+        // Try to get FAQs from CMS content
+        if (faq) {
+            for (let i = 1; i <= 10; i++) {
+                if (faq[`faq${i}_question`]) {
+                    faqList.push({
+                        question: faq[`faq${i}_question`],
+                        answer: faq[`faq${i}_answer`] || ''
+                    });
+                }
+            }
+        }
+        
+        // If no CMS FAQs, use defaults
+        if (faqList.length === 0) {
+            faqList = defaultFAQs;
+        }
+        
+        // Get section title from CMS or default
+        const faqTitle = faq.section_title || 'Frequently Asked Questions';
+        %>
+        
+        <h2><%= faqTitle %></h2>
+
+        <% faqList.forEach((faqItem, index) => { %>
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                <%= faqItem.question %>
+            </button>
+            <div class="faq-answer">
+                <p><%= faqItem.answer %></p>
+            </div>
+        </div>
+        <% }); %>
+    </section>
+    
+
+    <!-- NEWSLETTER SECTION  -->
+
+    <div class="newsletter">
+
+        <h1>Take the First Step Towards a <br> Healthier You</h1>
+        <p class="p1">Join MCQ Today and Transform Your Life with Expert Guidance, Personalized <br> Programs, and a
+            Supportive
+            Community. Your Fitness Journey Starts Now!
+        </p>
+        <form>
+            <input class="n1" type="email" placeholder="Enter Your Email" required>
+            <button class="n2" type="submit">Join Now <i class="fa-solid fa-cube"></i></button>
+        </form>
+        <p class="p2">By clicking Sign Up you're confirming that you agree with our <a href="#">Terms and
+                Conditions.</a></p>
+
+    </div>
+
+   
+
+    <!-- Testimonial JS  -->
+    <script>
+        const slider = document.querySelector('.reviews-slider');
+        const testimonials = slider.querySelectorAll('.testimonial');
+        const leftArrow = document.querySelector('.left-arrow');
+        const rightArrow = document.querySelector('.right-arrow');
+        let currentIndex = 0;
+
+        function getItemsPerSlide() {
+            return 3; // Always show 3 per slide regardless of screen size
+        }
+
+        function updateSlider() {
+            const itemsPerSlide = getItemsPerSlide();
+            const testimonialWidth = slider.querySelector('.testimonial').offsetWidth + 20; // width + gap
+            const totalGroups = Math.ceil(testimonials.length / itemsPerSlide);
+
+            // Clamp currentIndex
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex >= totalGroups) currentIndex = totalGroups - 1;
+
+            const translateX = -(testimonialWidth * itemsPerSlide * currentIndex);
+            slider.style.transform = `translateX(${translateX}px)`;
+        }
+
+        leftArrow.addEventListener('click', () => {
+            currentIndex--;
+            updateSlider();
+        });
+
+        rightArrow.addEventListener('click', () => {
+            currentIndex++;
+            updateSlider();
+        });
+
+        window.addEventListener('resize', updateSlider);
+        window.addEventListener('load', updateSlider);
+    </script>
+
+    <!-- FAQ ACCORDION  -->
+    <script>
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = button.parentElement;
+                const answer = item.querySelector('.faq-answer');
+
+                // Collapse other open items
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+    </script>
+
+    <!-- NAVBAR JS  -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const personalTrainingBtn = document.getElementById('personal-training-btn');
+            const megaDropdown = document.getElementById('mega-dropdown');
+            const allNavItems = document.querySelectorAll('.nav-item');
+
+            // Toggle dropdown on Personal Training click
+            personalTrainingBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const isOpen = megaDropdown.classList.contains('show');
+
+                // Close dropdown if open, open if closed
+                if (isOpen) {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                } else {
+                    megaDropdown.classList.add('show');
+                    personalTrainingBtn.classList.add('active');
+                }
+            });
+
+            // Close dropdown when clicking on other nav items
+            allNavItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                });
+            });
+
+            // Close dropdown when clicking anywhere else
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.mega-menu')) {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside it
+            megaDropdown.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+
+    <!-- CONTACT FORM AJAX -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const contactForm = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('contact-submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const messageDiv = document.getElementById('contact-message');
+            const messageIcon = document.getElementById('contact-icon');
+            const messageText = document.getElementById('contact-text');
+
+            contactForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Show loading state
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline';
+                messageDiv.style.display = 'none';
+
+                // Get form data
+                const formData = new FormData(contactForm);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    service: formData.get('service'),
+                    message: formData.get('message')
+                };
+
+                try {
+                    console.log('Sending AJAX request with data:', data);
+                    
+                    const response = await fetch('/contact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    
+                    // Check if response is JSON
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Server returned HTML instead of JSON. Check server logs.');
+                    }
+
+                    const result = await response.json();
+                    console.log('Response data:', result);
+
+                    if (result.success) {
+                        // Show success message
+                        messageDiv.style.background = '#d4edda';
+                        messageDiv.style.color = '#155724';
+                        messageDiv.style.border = '1px solid #c3e6cb';
+                        messageIcon.className = 'fa fa-check-circle';
+                        messageText.textContent = result.message;
+                        messageDiv.style.display = 'block';
+
+                        // Reset form
+                        contactForm.reset();
+
+                        // Smooth scroll to message
+                        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        throw new Error(result.message || 'Unknown error occurred');
+                    }
+                } catch (error) {
+                    // Show error message
+                    messageDiv.style.background = '#f8d7da';
+                    messageDiv.style.color = '#721c24';
+                    messageDiv.style.border = '1px solid #f5c6cb';
+                    messageIcon.className = 'fa fa-exclamation-triangle';
+                    messageText.textContent = error.message || 'Sorry, there was an error sending your message. Please try again.';
+                    messageDiv.style.display = 'block';
+
+                    // Smooth scroll to message
+                    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } finally {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline';
+                    btnLoading.style.display = 'none';
+
+                    // Auto-hide message after 5 seconds
+                    setTimeout(() => {
+                        messageDiv.style.opacity = '0';
+                        setTimeout(() => {
+                            messageDiv.style.display = 'none';
+                            messageDiv.style.opacity = '1';
+                        }, 300);
+                    }, 5000);
+                }
+            });
+        });
+    </script>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>
+          

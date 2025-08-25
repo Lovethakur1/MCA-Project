@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-semibold text-gray-900"><%= title %></h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/admin/pages" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Pages
+                    </a>
+                    <a href="/admin" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        
+        <form id="pageForm" action="<%= isEdit ? '/admin/pages/' + page._id : '/admin/pages' %>" method="POST" enctype="multipart/form-data" class="space-y-8">
+            
+            <!-- Basic Page Information -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Basic Page Information</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700">Page Title</label>
+                            <input type="text" id="title" name="title" value="<%= page ? page.title : '' %>" required 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="slug" class="block text-sm font-medium text-gray-700">URL Slug</label>
+                            <input type="text" id="slug" name="slug" value="<%= page ? page.slug : '' %>" required 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <p class="mt-1 text-sm text-gray-500">URL will be: /page/your-slug</p>
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="metaDescription" class="block text-sm font-medium text-gray-700">Meta Description</label>
+                            <textarea id="metaDescription" name="metaDescription" rows="2" 
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"><%= page ? page.metaDescription : '' %></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="status" name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="active" <%= page && page.status === 'active' ? 'selected' : '' %>>Active</option>
+                                <option value="draft" <%= page && page.status === 'draft' ? 'selected' : '' %>>Draft</option>
+                                <option value="archived" <%= page && page.status === 'archived' ? 'selected' : '' %>>Archived</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="showInNav" name="showInNav" value="true" 
+                                   <%= page && page.showInNav ? 'checked' : 'checked' %> 
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="showInNav" class="ml-2 block text-sm text-gray-900">Show in Navigation</label>
+                        </div>
+                        
+                        <div>
+                            <label for="navOrder" class="block text-sm font-medium text-gray-700">Navigation Order</label>
+                            <input type="number" id="navOrder" name="navOrder" value="<%= page ? page.navOrder : 0 %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Hero Section</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="heroTitle" class="block text-sm font-medium text-gray-700">Hero Title</label>
+                            <input type="text" id="heroTitle" name="hero[title]" value="<%= page && page.hero ? page.hero.title : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="heroSubtitle" class="block text-sm font-medium text-gray-700">Hero Subtitle</label>
+                            <input type="text" id="heroSubtitle" name="hero[subtitle]" value="<%= page && page.hero ? page.hero.subtitle : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="heroHashtag" class="block text-sm font-medium text-gray-700">Hashtag</label>
+                            <input type="text" id="heroHashtag" name="hero[hashtag]" value="<%= page && page.hero ? page.hero.hashtag : '' %>" 
+                                   placeholder="MakeTheMost" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="heroCtaText" class="block text-sm font-medium text-gray-700">CTA Button Text</label>
+                            <input type="text" id="heroCtaText" name="hero[ctaText]" value="<%= page && page.hero ? page.hero.ctaText : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="heroDescription" class="block text-sm font-medium text-gray-700">Hero Description</label>
+                            <textarea id="heroDescription" name="hero[description]" rows="3" 
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"><%= page && page.hero ? page.hero.description : '' %></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="heroCtaLink" class="block text-sm font-medium text-gray-700">CTA Button Link</label>
+                            <input type="text" id="heroCtaLink" name="hero[ctaLink]" value="<%= page && page.hero ? page.hero.ctaLink : '' %>" 
+                                   placeholder="/contact" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="heroShowCTA" name="hero[showCTA]" value="true" 
+                                   <%= page && page.hero && page.hero.showCTA ? 'checked' : 'checked' %> 
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="heroShowCTA" class="ml-2 block text-sm text-gray-900">Show CTA Button</label>
+                        </div>
+                    </div>
+
+                    <!-- Background Video Upload -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-medium text-gray-900 mb-4">Background Media</h4>
+                        
+                        <!-- Current Video Preview -->
+                        <% if (page && page.hero && page.hero.backgroundVideo) { %>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Current Background Video:</p>
+                            <div class="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                                <video class="w-full h-full object-cover" controls>
+                                    <source src="/media/<%= page.hero.backgroundVideo %>" type="video/mp4">
+                                </video>
+                            </div>
+                        </div>
+                        <% } %>
+                        
+                        <!-- Video Upload -->
+                        <div class="mb-4">
+                            <label for="heroBackgroundVideo" class="block text-sm font-medium text-gray-700 mb-2">Upload Background Video</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition duration-200">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-sm text-gray-600 mb-2">Click to upload or drag and drop</p>
+                                <input type="file" id="heroBackgroundVideo" name="heroBackgroundVideo" accept="video/*" class="hidden" onchange="handleVideoUpload(this, 'heroVideoPreview')">
+                                <button type="button" onclick="document.getElementById('heroBackgroundVideo').click()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                                    Choose Video File
+                                </button>
+                                <p class="text-xs text-gray-500 mt-2">MP4, WebM up to 50MB</p>
+                            </div>
+                            <div id="heroVideoPreview" class="mt-4 hidden">
+                                <video class="w-full h-48 object-cover rounded-lg" controls></video>
+                            </div>
+                        </div>
+                        
+                        <!-- Background Image Upload -->
+                        <div>
+                            <label for="heroBackgroundImage" class="block text-sm font-medium text-gray-700 mb-2">Upload Background Image (Alternative to Video)</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition duration-200">
+                                <i class="fas fa-image text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-sm text-gray-600 mb-2">Click to upload background image</p>
+                                <input type="file" id="heroBackgroundImage" name="heroBackgroundImage" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'heroImagePreview')">
+                                <button type="button" onclick="document.getElementById('heroBackgroundImage').click()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                                    Choose Image File
+                                </button>
+                                <p class="text-xs text-gray-500 mt-2">JPG, PNG up to 10MB</p>
+                            </div>
+                            <div id="heroImagePreview" class="mt-4 hidden">
+                                <img class="w-full h-48 object-cover rounded-lg" src="" alt="Preview">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Services Section</h3>
+                        <button type="button" onclick="addService()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add Service
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-6">
+                        <div>
+                            <label for="servicesTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                            <input type="text" id="servicesTitle" name="services[sectionTitle]" value="<%= page && page.services ? page.services.sectionTitle : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="servicesDescription" class="block text-sm font-medium text-gray-700">Section Description</label>
+                            <input type="text" id="servicesDescription" name="services[sectionDescription]" value="<%= page && page.services ? page.services.sectionDescription : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                    
+                    <!-- Services List -->
+                    <div id="servicesList" class="space-y-6">
+                        <!-- Services will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Benefits Section</h3>
+                        <button type="button" onclick="addBenefit()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add Benefit
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="benefitsTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                        <input type="text" id="benefitsTitle" name="benefits[sectionTitle]" value="<%= page && page.benefits ? page.benefits.sectionTitle : '' %>" 
+                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div id="benefitsList" class="space-y-6">
+                        <!-- Benefits will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">FAQ Section</h3>
+                        <button type="button" onclick="addFAQ()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add FAQ
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="faqTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                        <input type="text" id="faqTitle" name="faq[sectionTitle]" value="<%= page && page.faq ? page.faq.sectionTitle : '' %>" 
+                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div id="faqList" class="space-y-6">
+                        <!-- FAQs will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Concept/About Section</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="conceptSectionTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                            <input type="text" id="conceptSectionTitle" name="concept[sectionTitle]" value="<%= page && page.concept ? page.concept.sectionTitle : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="conceptMainTitle" class="block text-sm font-medium text-gray-700">Main Title</label>
+                            <input type="text" id="conceptMainTitle" name="concept[mainTitle]" value="<%= page && page.concept ? page.concept.mainTitle : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="conceptDescription" class="block text-sm font-medium text-gray-700">Main Description</label>
+                            <textarea id="conceptDescription" name="concept[mainDescription]" rows="4" 
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"><%= page && page.concept ? page.concept.mainDescription : '' %></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Concept Image Upload -->
+                    <div class="mt-6">
+                        <label for="conceptImage" class="block text-sm font-medium text-gray-700 mb-2">Concept Image</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition duration-200">
+                            <i class="fas fa-image text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-sm text-gray-600 mb-2">Upload concept section image</p>
+                            <input type="file" id="conceptImage" name="conceptImage" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'conceptImagePreview')">
+                            <button type="button" onclick="document.getElementById('conceptImage').click()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                                Choose Image
+                            </button>
+                        </div>
+                        <div id="conceptImagePreview" class="mt-4 hidden">
+                            <img class="w-full h-48 object-cover rounded-lg" src="" alt="Preview">
+                        </div>
+                    </div>
+
+                    <!-- Concept Features -->
+                    <div class="mt-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-md font-medium text-gray-900">Features</h4>
+                            <button type="button" onclick="addConceptFeature()" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition duration-200">
+                                <i class="fas fa-plus mr-1"></i>Add Feature
+                            </button>
+                        </div>
+                        <div id="conceptFeaturesList" class="space-y-4">
+                            <!-- Features will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Team Section</h3>
+                        <button type="button" onclick="addTeamMember()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add Team Member
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-6">
+                        <div>
+                            <label for="teamTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                            <input type="text" id="teamTitle" name="team[sectionTitle]" value="<%= page && page.team ? page.team.sectionTitle : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="teamDescription" class="block text-sm font-medium text-gray-700">Section Description</label>
+                            <input type="text" id="teamDescription" name="team[sectionDescription]" value="<%= page && page.team ? page.team.sectionDescription : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                    
+                    <div id="teamMembersList" class="space-y-6">
+                        <!-- Team members will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Benefits Section</h3>
+                        <button type="button" onclick="addBenefit()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add Benefit
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="benefitsTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                        <input type="text" id="benefitsTitle" name="benefits[sectionTitle]" value="<%= page && page.benefits ? page.benefits.sectionTitle : '' %>" 
+                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div id="benefitsList" class="space-y-6">
+                        <!-- Benefits will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">FAQ Section</h3>
+                        <button type="button" onclick="addFAQ()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add FAQ
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="faqTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                        <input type="text" id="faqTitle" name="faq[sectionTitle]" value="<%= page && page.faq ? page.faq.sectionTitle : '' %>" 
+                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div id="faqList" class="space-y-6">
+                        <!-- FAQs will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonials Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Testimonials Section</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="testimonialsTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                            <input type="text" id="testimonialsTitle" name="testimonials[sectionTitle]" value="<%= page && page.testimonials ? page.testimonials.sectionTitle : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="showTestimonials" name="testimonials[showTestimonials]" value="true" 
+                                   <%= page && page.testimonials && page.testimonials.showTestimonials ? 'checked' : 'checked' %> 
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="showTestimonials" class="ml-2 block text-sm text-gray-900">Show Testimonials from Database</label>
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="testimonialsDescription" class="block text-sm font-medium text-gray-700">Section Description</label>
+                            <textarea id="testimonialsDescription" name="testimonials[sectionDescription]" rows="2" 
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"><%= page && page.testimonials ? page.testimonials.sectionDescription : '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Contact Section</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="contactTitle" class="block text-sm font-medium text-gray-700">Section Title</label>
+                            <input type="text" id="contactTitle" name="contact[sectionTitle]" value="<%= page && page.contact ? page.contact.sectionTitle : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="showContactForm" name="contact[showContactForm]" value="true" 
+                                   <%= page && page.contact && page.contact.showContactForm ? 'checked' : 'checked' %> 
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="showContactForm" class="ml-2 block text-sm text-gray-900">Show Contact Form</label>
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="contactDescription" class="block text-sm font-medium text-gray-700">Section Description</label>
+                            <textarea id="contactDescription" name="contact[sectionDescription]" rows="2" 
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"><%= page && page.contact ? page.contact.sectionDescription : '' %></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-medium text-gray-900 mb-4">Contact Information</h4>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label for="contactAddress" class="block text-sm font-medium text-gray-700">Address</label>
+                                <input type="text" id="contactAddress" name="contact[contactInfo][address]" value="<%= page && page.contact && page.contact.contactInfo ? page.contact.contactInfo.address : '' %>" 
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="contactPhone" class="block text-sm font-medium text-gray-700">Phone</label>
+                                <input type="text" id="contactPhone" name="contact[contactInfo][phone]" value="<%= page && page.contact && page.contact.contactInfo ? page.contact.contactInfo.phone : '' %>" 
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="contactEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" id="contactEmail" name="contact[contactInfo][email]" value="<%= page && page.contact && page.contact.contactInfo ? page.contact.contactInfo.email : '' %>" 
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="contactHours" class="block text-sm font-medium text-gray-700">Business Hours</label>
+                                <input type="text" id="contactHours" name="contact[contactInfo][hours]" value="<%= page && page.contact && page.contact.contactInfo ? page.contact.contactInfo.hours : '' %>" 
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter Section -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Newsletter Section</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="newsletterTitle" class="block text-sm font-medium text-gray-700">Newsletter Title</label>
+                            <input type="text" id="newsletterTitle" name="newsletter[title]" value="<%= page && page.newsletter ? page.newsletter.title : '' %>" 
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="showNewsletter" name="newsletter[showNewsletter]" value="true" 
+                                   <%= page && page.newsletter && page.newsletter.showNewsletter ? 'checked' : 'checked' %> 
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="showNewsletter" class="ml-2 block text-sm text-gray-900">Show Newsletter Signup</label>
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="newsletterDescription" class="block text-sm font-medium text-gray-700">Newsletter Description</label>
+                            <textarea id="newsletterDescription" name="newsletter[description]" rows="2" 
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"><%= page && page.newsletter ? page.newsletter.description : '' %></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="newsletterButtonText" class="block text-sm font-medium text-gray-700">Button Text</label>
+                            <input type="text" id="newsletterButtonText" name="newsletter[buttonText]" value="<%= page && page.newsletter ? page.newsletter.buttonText : '' %>" 
+                                   placeholder="Subscribe Now" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="newsletterPlaceholder" class="block text-sm font-medium text-gray-700">Email Placeholder</label>
+                            <input type="text" id="newsletterPlaceholder" name="newsletter[placeholder]" value="<%= page && page.newsletter ? page.newsletter.placeholder : '' %>" 
+                                   placeholder="Enter your email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-4">
+                <a href="/admin/pages" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition duration-200">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                    <i class="fas fa-save mr-2"></i><%= isEdit ? 'Update Page' : 'Create Page' %>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let serviceCount = 0;
+        let conceptFeatureCount = 0;
+        let teamMemberCount = 0;
+        let benefitCount = 0;
+        let faqCount = 0;
+
+        // File Upload Handlers
+        function handleVideoUpload(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const preview = document.getElementById(previewId);
+                const video = preview.querySelector('video');
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    video.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleImageUpload(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const preview = document.getElementById(previewId);
+                const img = preview.querySelector('img');
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleIconUpload(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const preview = document.getElementById(previewId);
+                const img = preview.querySelector('img');
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Add Service
+        function addService() {
+            serviceCount++;
+            const servicesList = document.getElementById('servicesList');
+            const serviceHTML = `
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200 service-item">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-md font-medium text-gray-900">Service ${serviceCount}</h4>
+                        <button type="button" onclick="removeService(this)" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Service Title</label>
+                            <input type="text" name="services[items][${serviceCount}][title]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Price</label>
+                            <input type="text" name="services[items][${serviceCount}][price]" placeholder="CHF 150.– per hour" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea name="services[items][${serviceCount}][description]" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Link URL</label>
+                            <input type="text" name="services[items][${serviceCount}][link]" placeholder="/services/details" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Service Icon</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-indigo-400 transition duration-200">
+                                <i class="fas fa-upload text-2xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-600 mb-2">Upload Icon</p>
+                                <input type="file" id="serviceIcon${serviceCount}" name="services[items][${serviceCount}][iconFile]" accept="image/*" class="hidden" onchange="handleIconUpload(this, 'serviceIconPreview${serviceCount}')">
+                                <button type="button" onclick="document.getElementById('serviceIcon${serviceCount}').click()" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition duration-200">
+                                    Choose Icon
+                                </button>
+                            </div>
+                            <div id="serviceIconPreview${serviceCount}" class="mt-2 hidden">
+                                <img class="w-16 h-16 object-contain mx-auto" src="" alt="Icon Preview">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            servicesList.insertAdjacentHTML('beforeend', serviceHTML);
+        }
+
+        function removeService(button) {
+            if (confirm('Remove this service?')) {
+                button.closest('.service-item').remove();
+            }
+        }
+
+        // Add Concept Feature
+        function addConceptFeature() {
+            conceptFeatureCount++;
+            const featuresList = document.getElementById('conceptFeaturesList');
+            const featureHTML = `
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 feature-item">
+                    <div class="flex justify-between items-center mb-3">
+                        <h5 class="text-sm font-medium text-gray-900">Feature ${conceptFeatureCount}</h5>
+                        <button type="button" onclick="removeConceptFeature(this)" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Feature Title</label>
+                            <input type="text" name="concept[features][${conceptFeatureCount}][title]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Feature Icon</label>
+                            <div class="border border-gray-300 rounded p-2 text-center">
+                                <input type="file" id="conceptFeatureIcon${conceptFeatureCount}" name="concept[features][${conceptFeatureCount}][iconFile]" accept="image/*" class="hidden" onchange="handleIconUpload(this, 'conceptFeatureIconPreview${conceptFeatureCount}')">
+                                <button type="button" onclick="document.getElementById('conceptFeatureIcon${conceptFeatureCount}').click()" class="text-sm text-indigo-600 hover:text-indigo-800">
+                                    <i class="fas fa-upload mr-1"></i>Upload Icon
+                                </button>
+                                <div id="conceptFeatureIconPreview${conceptFeatureCount}" class="mt-2 hidden">
+                                    <img class="w-8 h-8 object-contain mx-auto" src="" alt="Icon Preview">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea name="concept[features][${conceptFeatureCount}][description]" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            featuresList.insertAdjacentHTML('beforeend', featureHTML);
+        }
+
+        function removeConceptFeature(button) {
+            button.closest('.feature-item').remove();
+        }
+
+        // Add Team Member
+        function addTeamMember() {
+            teamMemberCount++;
+            const teamMembersList = document.getElementById('teamMembersList');
+            const memberHTML = `
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200 team-member-item">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-md font-medium text-gray-900">Team Member ${teamMemberCount}</h4>
+                        <button type="button" onclick="removeTeamMember(this)" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Name</label>
+                            <input type="text" name="team[members][${teamMemberCount}][name]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Position</label>
+                            <input type="text" name="team[members][${teamMemberCount}][position]" placeholder="Personal Trainer" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Bio</label>
+                            <textarea name="team[members][${teamMemberCount}][bio]" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Photo</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-indigo-400 transition duration-200">
+                                <i class="fas fa-user text-2xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-600 mb-2">Upload Photo</p>
+                                <input type="file" id="teamPhoto${teamMemberCount}" name="team[members][${teamMemberCount}][photoFile]" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'teamPhotoPreview${teamMemberCount}')">
+                                <button type="button" onclick="document.getElementById('teamPhoto${teamMemberCount}').click()" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition duration-200">
+                                    Choose Photo
+                                </button>
+                            </div>
+                            <div id="teamPhotoPreview${teamMemberCount}" class="mt-2 hidden">
+                                <img class="w-24 h-24 object-cover rounded-full mx-auto" src="" alt="Photo Preview">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Social Media Links</label>
+                            <div class="space-y-2">
+                                <input type="text" name="team[members][${teamMemberCount}][social][instagram]" placeholder="Instagram URL" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="text" name="team[members][${teamMemberCount}][social][linkedin]" placeholder="LinkedIn URL" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="text" name="team[members][${teamMemberCount}][social][email]" placeholder="Email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            teamMembersList.insertAdjacentHTML('beforeend', memberHTML);
+        }
+
+        function removeTeamMember(button) {
+            if (confirm('Remove this team member?')) {
+                button.closest('.team-member-item').remove();
+            }
+        }
+
+        // Add Benefit
+        function addBenefit() {
+            benefitCount++;
+            const benefitsList = document.getElementById('benefitsList');
+            const benefitHTML = `
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 benefit-item">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-md font-medium text-gray-900">Benefit ${benefitCount}</h4>
+                        <button type="button" onclick="removeBenefit(this)" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Benefit Title</label>
+                            <input type="text" name="benefits[items][${benefitCount}][title]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Benefit Icon</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-indigo-400 transition duration-200">
+                                <input type="file" id="benefitIcon${benefitCount}" name="benefits[items][${benefitCount}][iconFile]" accept="image/*" class="hidden" onchange="handleIconUpload(this, 'benefitIconPreview${benefitCount}')">
+                                <button type="button" onclick="document.getElementById('benefitIcon${benefitCount}').click()" class="text-sm text-indigo-600 hover:text-indigo-800">
+                                    <i class="fas fa-upload mr-1"></i>Upload Icon
+                                </button>
+                                <div id="benefitIconPreview${benefitCount}" class="mt-2 hidden">
+                                    <img class="w-12 h-12 object-contain mx-auto" src="" alt="Icon Preview">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea name="benefits[items][${benefitCount}][description]" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            benefitsList.insertAdjacentHTML('beforeend', benefitHTML);
+        }
+
+        function removeBenefit(button) {
+            if (confirm('Remove this benefit?')) {
+                button.closest('.benefit-item').remove();
+            }
+        }
+
+        // Add FAQ
+        function addFAQ() {
+            faqCount++;
+            const faqList = document.getElementById('faqList');
+            const faqHTML = `
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 faq-item">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-md font-medium text-gray-900">FAQ ${faqCount}</h4>
+                        <button type="button" onclick="removeFAQ(this)" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Question</label>
+                            <input type="text" name="faq[items][${faqCount}][question]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Answer</label>
+                            <textarea name="faq[items][${faqCount}][answer]" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            faqList.insertAdjacentHTML('beforeend', faqHTML);
+        }
+
+        function removeFAQ(button) {
+            if (confirm('Remove this FAQ?')) {
+                button.closest('.faq-item').remove();
+            }
+        }
+
+        // Auto-generate slug from title
+        document.getElementById('title').addEventListener('input', function() {
+            const title = this.value;
+            const slug = title.toLowerCase()
+                .replace(/[^a-z0-9 -]/g, '') // Remove invalid chars
+                .replace(/\s+/g, '-') // Replace spaces with hyphens
+                .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+                .trim('-'); // Remove leading/trailing hyphens
+            document.getElementById('slug').value = slug;
+        });
+
+        // Initialize with some default content if creating new page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add one default service
+            addService();
+            // Add one default benefit
+            addBenefit();
+            // Add one default FAQ
+            addFAQ();
+            // Add one default concept feature
+            addConceptFeature();
+            // Add one default team member
+            addTeamMember();
+        });
+    </script>
+</body>
+</html>

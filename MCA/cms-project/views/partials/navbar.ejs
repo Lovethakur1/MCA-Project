@@ -1,0 +1,89 @@
+<!-- NAVBAR SECTION  -->
+<header class="navbar">
+    <div class="logo">
+        <a href="/">
+            <img src="<%= (typeof navbar !== 'undefined' && navbar && navbar.logo) ? navbar.logo : '/media/mca-logo-300x80.webp' %>" width="120px" alt="<%= (typeof siteSettings !== 'undefined' && siteSettings && siteSettings.siteName) ? siteSettings.siteName : 'MCA' %>">
+        </a>
+    </div>
+
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="hamburger">&#9776;</label>
+
+    <nav class="nav-links">
+        <div class="dropdown mega-menu">
+            <a href="#" id="personal-training-btn"><%= (typeof navbar !== 'undefined' && navbar && navbar.personalTraining && navbar.personalTraining.title) ? navbar.personalTraining.title : 'Personal Training' %></a>
+            <div class="mega-dropdown-content" id="mega-dropdown">
+                <% if (typeof navbar !== 'undefined' && navbar && navbar.personalTraining && navbar.personalTraining.items) { %>
+                    <% navbar.personalTraining.items.forEach(item => { %>
+                        <div class="mega-item">
+                            <img src="<%= item.icon %>" alt="Icon" />
+                            <h4><%= item.title %></h4>
+                            <p><%= item.description %></p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <!-- Default mega menu items -->
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/dumbbell.png" alt="Icon" />
+                        <h4>Personal Training in Private Studio</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/yoga.png" alt="Icon" />
+                        <h4>Personal Training in Seniors</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/family.png" alt="Icon" />
+                        <h4>Personal Training in Couples</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/barbell.png" alt="Icon" />
+                        <h4>Personal Training in Domicil</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/health-checkup.png" alt="Icon" />
+                        <h4>Health Coaching</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/planner.png" alt="Icon" />
+                        <h4>Personalized Training Plan</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/recovery.png" alt="Icon" />
+                        <h4>Recovery</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                    <div class="mega-item">
+                        <img src="https://img.icons8.com/ios-filled/50/000000/support.png" alt="Icon" />
+                        <h4>Network of Experts</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur. Nisl.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <a href="/bootcamp" class="nav-item"><%= (typeof navbar !== 'undefined' && navbar && navbar.bootcamp) ? navbar.bootcamp : 'Bootcamp' %></a>
+        <a href="/coach" class="nav-item"><%= (typeof navbar !== 'undefined' && navbar && navbar.coach) ? navbar.coach : 'Coach Mary Carmen' %></a>
+        <a href="/blog" class="nav-item"><%= (typeof navbar !== 'undefined' && navbar && navbar.blog) ? navbar.blog : 'Blog' %></a>
+        <a href="/testimonial" class="nav-item"><%= (typeof navbar !== 'undefined' && navbar && navbar.testimonials) ? navbar.testimonials : 'Testimonial' %></a>
+        <a href="/price" class="nav-item"><%= (typeof navbar !== 'undefined' && navbar && navbar.pricing) ? navbar.pricing : 'Price' %></a>
+        
+        <!-- Dynamic Pages -->
+        <% if (typeof navigationPages !== 'undefined' && navigationPages && navigationPages.length > 0) { %>
+            <% navigationPages.forEach(page => { %>
+                <a href="/page/<%= page.slug %>" class="nav-item"><%= page.title %></a>
+            <% }) %>
+        <% } %>
+        
+        <a href="/contact" class="nav-item"><%= (typeof navbar !== 'undefined' && navbar && navbar.contact) ? navbar.contact : 'Contact' %></a>
+    </nav>
+
+    <div class="language-flag">
+        <img src="<%= (typeof navbar !== 'undefined' && navbar && navbar.languageFlag) ? navbar.languageFlag : 'https://flagcdn.com/gb.svg' %>" alt="<%= (typeof navbar !== 'undefined' && navbar && navbar.language) ? navbar.language : 'English' %>" />
+    </div>
+</header>

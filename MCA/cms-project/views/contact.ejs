@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <%- include('partials/navbar') %>
+
+    <!-- Contact form  -->
+
+    <section class="cpcontact-section">
+        <div class="cpcontact-form-container">
+            <h1>Get in Touch with<br>FitLife Studio</h1>
+            <p>We're Here to Help You on Your Fitness Journey. Reach<br>Out to Us with Any Questions or to Schedule a
+                Visit!
+            </p>
+
+            <form class="cpcontact-form">
+                <div class="cpform-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="">
+                </div>
+
+                <div class="cpform-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="">
+                </div>
+
+                <div class="cpform-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Type your message..."></textarea>
+                </div>
+
+                <div class="cpcheckbox-group">
+                    <input type="checkbox" id="acceptTerms" name="acceptTerms">
+                    <label for="acceptTerms">I accept the Terms</label>
+                </div>
+
+                <button type="submit" class="cpsubmit-button">Submit Now</button>
+            </form>
+        </div>
+
+        <div class="cpcontact-image-container">
+            <img src="media\Placeholder Image.png" alt="Contact Us Image">
+        </div>
+    </section>
+
+
+
+    <!-- CONTACT INFORMATION -->
+
+    <section class="contact-info-section">
+        <div class="contact-cards-container">
+            <div class="contact-card">
+                <i class="fas fa-envelope"></i>
+                <h3>Email</h3>
+                <p>For Inquiries and Support, Reach Out to Us</p>
+                <a href="mailto:info@personaltrainerbasel.ch">info@personaltrainerbasel.ch</a>
+            </div>
+
+            <div class="contact-card">
+                <i class="fas fa-phone-alt"></i>
+                <h3>Phone</h3>
+                <p>Speak with Our Team Directly</p>
+                <a href="tel:+41795217192">+41795217192</a>
+            </div>
+        </div>
+
+        <div class="location-info-container">
+            <h2>Visit FitLife Studio</h2>
+            <p>Conveniently Located to Serve Your Fitness Needs. Find Us and Start Your<br>Journey Today!</p>
+        </div>
+    </section>
+
+    <!-- ADDRESS SECTION  -->
+
+    <section class="address-map-section">
+        <div class="address-details">
+            <h2>Address</h2>
+            <p>Personal Trainer Basel</p>
+            <p>Personal Trainer Basel GmbH<br>Ruchfeldstrasse 24<br>4142 Münchenstein</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Ruchfeldstrasse+24,+4142+Münchenstein"
+                target="_blank" class="view-map-link">View Map</a>
+        </div>
+        <div class="map-container">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d10775.712973744614!2d7.610195!3d47.53026!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4791b9d6f7c6b687%3A0x5d3f82a6ec793a7!2sPersonal%20Trainer%20Basel%20GmbH!5e0!3m2!1sen!2sus!4v1754153918861!5m2!1sen!2sus"
+                width="600" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION  -->
+
+    <section class="faq-section">
+        <h2>Asked Questions</h2>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                I need consultation about the prices of StrongX's services?
+            </button>
+            <div class="faq-answer">
+                <p>Our prices depend on your goals. Contact us for a personalized quote and free consultation.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                As a beginner, how can I find out which workout program is right for me?
+            </button>
+            <div class="faq-answer">
+                <p>Our trainers offer an initial assessment to design a program tailored to your needs and experience
+                    level.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                Is my membership card valid for use at all StrongX facilities?
+            </button>
+            <div class="faq-answer">
+                <p>Yes! StrongX memberships give you access to all our nationwide facilities.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                What are StrongX's operating hours?
+            </button>
+            <div class="faq-answer">
+                <p>Most StrongX locations are open 6AM-10PM Monday to Saturday, and 8AM-8PM on Sunday.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                <span class="faq-icon">+</span>
+                Does StrongX offer childcare services?
+            </button>
+            <div class="faq-answer">
+                <p>Yes, select locations have childcare available during peak hours. Please check with your local gym.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+ 
+
+
+
+    <!-- NAVBAR JS  -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const personalTrainingBtn = document.getElementById('personal-training-btn');
+            const megaDropdown = document.getElementById('mega-dropdown');
+            const allNavItems = document.querySelectorAll('.nav-item');
+
+            // Toggle dropdown on Personal Training click
+            personalTrainingBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const isOpen = megaDropdown.classList.contains('show');
+
+                // Close dropdown if open, open if closed
+                if (isOpen) {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                } else {
+                    megaDropdown.classList.add('show');
+                    personalTrainingBtn.classList.add('active');
+                }
+            });
+
+            // Close dropdown when clicking on other nav items
+            allNavItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                });
+            });
+
+            // Close dropdown when clicking anywhere else
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.mega-menu')) {
+                    megaDropdown.classList.remove('show');
+                    personalTrainingBtn.classList.remove('active');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside it
+            megaDropdown.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+
+    
+    <!-- FAQ ACCORDION  -->
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = button.parentElement;
+                const answer = item.querySelector('.faq-answer');
+
+                // Collapse other open items
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('active');
+
+                // Scroll to the opened answer smoothly if expanded
+                // if (item.classList.contains('active')) {
+                //     setTimeout(() => {
+                //         answer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                //     }, 300); // Wait for expand animation
+                // }
+            });
+        });
+    </script>
+
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
