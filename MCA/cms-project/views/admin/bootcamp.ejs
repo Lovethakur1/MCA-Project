@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootcamp Admin - MCA CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        .file-name {
+            background: #f3f4f6;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center">
+                    <button class="lg:hidden text-gray-600 hover:text-gray-900 mr-4" id="sidebar-toggle">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold text-gray-900">Bootcamp Management</h1>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="flex items-center text-gray-700 hover:text-gray-900" id="user-menu-button">
+                            <i class="fas fa-user-circle text-2xl mr-2"></i>
+                            <span>Admin</span>
+                            <i class="fas fa-chevron-down ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="p-6">
+            <!-- Success/Error Messages -->
+            <% if (typeof success !== 'undefined') { %>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                    <%= success %>
+                </div>
+            <% } %>
+            <% if (typeof error !== 'undefined') { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form action="/admin/bootcamp" method="POST" enctype="multipart/form-data" class="space-y-8">
+
+                <!-- Hero Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-home mr-2 text-indigo-600"></i>
+                        Hero Section
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input type="text" name="hero_title" 
+                                   value="<%= content.hero.title || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter hero title">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
+                            <input type="text" name="hero_button_text" 
+                                   value="<%= content.hero.button_text || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter button text">
+                        </div>
+                        
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea name="hero_description" rows="4"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                      placeholder="Enter hero description"><%= content.hero.description || '' %></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Small Image</label>
+                            <div class="file-input-wrapper">
+                                <label for="hero_image_small" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Image
+                                </label>
+                                <input type="file" id="hero_image_small" name="hero_image_small" accept="image/*">
+                            </div>
+                            <% if (content.hero.image_small) { %>
+                            <div id="hero_image_small_name" class="file-name">
+                                Current: <%= content.hero.image_small %>
+                            </div>
+                            <% } else { %>
+                            <div id="hero_image_small_name" class="file-name" style="display: none;">
+                                Current: 
+                            </div>
+                            <% } %>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Large Image</label>
+                            <div class="file-input-wrapper">
+                                <label for="hero_image_large" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Image
+                                </label>
+                                <input type="file" id="hero_image_large" name="hero_image_large" accept="image/*">
+                            </div>
+                            <% if (content.hero.image_large) { %>
+                            <div id="hero_image_large_name" class="file-name">
+                                Current: <%= content.hero.image_large %>
+                            </div>
+                            <% } else { %>
+                            <div id="hero_image_large_name" class="file-name" style="display: none;">
+                                Current: 
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basel Bootcamp Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2 text-indigo-600"></i>
+                        Bootcamp in Basel
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input type="text" name="basel_title" 
+                                   value="<%= content.basel.title || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter Basel section title">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
+                            <input type="text" name="basel_button_text" 
+                                   value="<%= content.basel.button_text || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter button text">
+                        </div>
+                        
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
+                            <textarea name="basel_subtitle" rows="2"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                      placeholder="Enter subtitle"><%= content.basel.subtitle || '' %></textarea>
+                        </div>
+                        
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Main Image</label>
+                            <div class="file-input-wrapper">
+                                <label for="basel_image" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Image
+                                </label>
+                                <input type="file" id="basel_image" name="basel_image" accept="image/*">
+                            </div>
+                            <% if (content.basel.image) { %>
+                            <div id="basel_image_name" class="file-name">
+                                Current: <%= content.basel.image %>
+                            </div>
+                            <% } else { %>
+                            <div id="basel_image_name" class="file-name" style="display: none;">
+                                Current: 
+                            </div>
+                            <% } %>
+                        </div>
+                        
+                        <!-- Benefits List -->
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Benefits (one per line)</label>
+                            <div class="space-y-3">
+                                <% for (let i = 1; i <= 4; i++) { %>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input type="text" name="basel_benefit_<%= i %>_title" 
+                                           value="<%= content.basel[`benefit_${i}_title`] || '' %>"
+                                           class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                           placeholder="Benefit <%= i %> title">
+                                    <textarea name="basel_benefit_<%= i %>_description" rows="2"
+                                              class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                              placeholder="Benefit <%= i %> description"><%= content.basel[`benefit_${i}_description`] || '' %></textarea>
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Croatia Bootcamp Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-umbrella-beach mr-2 text-indigo-600"></i>
+                        Bootcamp in Croatia
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input type="text" name="croatia_title" 
+                                   value="<%= content.croatia.title || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter Croatia section title">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
+                            <input type="text" name="croatia_button_text" 
+                                   value="<%= content.croatia.button_text || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter button text">
+                        </div>
+                        
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea name="croatia_description" rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                      placeholder="Enter description"><%= content.croatia.description || '' %></textarea>
+                        </div>
+                        
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Main Image</label>
+                            <div class="file-input-wrapper">
+                                <label for="croatia_image" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Image
+                                </label>
+                                <input type="file" id="croatia_image" name="croatia_image" accept="image/*">
+                            </div>
+                            <% if (content.croatia.image) { %>
+                            <div id="croatia_image_name" class="file-name">
+                                Current: <%= content.croatia.image %>
+                            </div>
+                            <% } else { %>
+                            <div id="croatia_image_name" class="file-name" style="display: none;">
+                                Current: 
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-question-circle mr-2 text-indigo-600"></i>
+                            FAQ Section
+                        </h2>
+                        <button type="button" onclick="addFaqItem()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                            <i class="fas fa-plus mr-2"></i>Add FAQ
+                        </button>
+                    </div>
+                    
+                    <div id="faq-container">
+                        <% 
+                        let faqCount = 0;
+                        for (let key in content.faq) {
+                            if (key.startsWith('question_')) {
+                                faqCount++;
+                            }
+                        }
+                        for (let i = 1; i <= Math.max(faqCount, 1); i++) { 
+                        %>
+                        <div class="faq-item border border-gray-200 rounded-lg p-4 mb-4">
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Question <%= i %></label>
+                                    <input type="text" name="faq_question_<%= i %>" 
+                                           value="<%= content.faq[`question_${i}`] || '' %>"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                           placeholder="Enter FAQ question">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Answer <%= i %></label>
+                                    <textarea name="faq_answer_<%= i %>" rows="3"
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                              placeholder="Enter FAQ answer"><%= content.faq[`answer_${i}`] || '' %></textarea>
+                                </div>
+                                <% if (i > 1) { %>
+                                <div class="flex justify-end">
+                                    <button type="button" onclick="removeFaqItem(this)" class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 text-sm">
+                                        <i class="fas fa-trash mr-1"></i>Remove
+                                    </button>
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end space-x-4">
+                    <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-md hover:bg-indigo-700 font-medium">
+                        <i class="fas fa-save mr-2"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Sidebar toggle functionality
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+
+        // File input display
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const nameDiv = document.getElementById(this.id + '_name');
+                if (this.files.length > 0) {
+                    nameDiv.textContent = 'Selected: ' + this.files[0].name;
+                    nameDiv.style.display = 'block';
+                }
+            });
+        });
+
+        // FAQ Management
+        let faqCounter = 1; // Start with at least 1
+
+        function addFaqItem() {
+            faqCounter++;
+            const container = document.getElementById('faq-container');
+            const faqItem = document.createElement('div');
+            faqItem.className = 'faq-item border border-gray-200 rounded-lg p-4 mb-4';
+            faqItem.innerHTML = `
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Question ${faqCounter}</label>
+                        <input type="text" name="faq_question_${faqCounter}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                               placeholder="Enter FAQ question">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Answer ${faqCounter}</label>
+                        <textarea name="faq_answer_${faqCounter}" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                  placeholder="Enter FAQ answer"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" onclick="removeFaqItem(this)" class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 text-sm">
+                            <i class="fas fa-trash mr-1"></i>Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(faqItem);
+        }
+
+        function removeFaqItem(button) {
+            button.closest('.faq-item').remove();
+        }
+
+        // URL parameter handling for messages
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            const successMsg = document.createElement('div');
+            successMsg.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6';
+            successMsg.textContent = urlParams.get('success');
+            document.querySelector('main').insertBefore(successMsg, document.querySelector('main').firstChild);
+        }
+        if (urlParams.get('error')) {
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6';
+            errorMsg.textContent = urlParams.get('error');
+            document.querySelector('main').insertBefore(errorMsg, document.querySelector('main').firstChild);
+        }
+    </script>
+</body>
+</html>

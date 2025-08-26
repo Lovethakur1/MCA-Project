@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 const pageController = require('../controllers/pageController');
+const bootcampController = require('../controllers/bootcampController');
 const authMiddleware = require('../middleware/auth');
 const multer = require('multer');
 
@@ -47,6 +48,18 @@ router.get('/dashboard', adminController.getDashboard);
 // Home page management
 router.get('/home', adminController.getHomeManager);
 router.post('/home/update', adminController.updateHomeContent);
+
+// Bootcamp page management
+router.get('/bootcamp', bootcampController.getBootcampAdmin);
+router.post('/bootcamp', bootcampController.upload.any(), bootcampController.updateBootcampContent);
+router.post('/bootcamp/faq/add', bootcampController.addFaqItem);
+router.delete('/bootcamp/faq/:index', bootcampController.deleteFaqItem);
+
+// Bootcamp page management
+router.get('/bootcamp', bootcampController.getBootcampAdmin);
+router.post('/bootcamp', bootcampController.upload.any(), bootcampController.updateBootcampContent);
+router.post('/bootcamp/faq', bootcampController.addFaqItem);
+router.delete('/bootcamp/faq/:index', bootcampController.deleteFaqItem);
 
 // Individual section updates
 router.post('/video/update', adminController.updateVideoSection);
