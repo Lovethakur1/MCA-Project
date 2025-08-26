@@ -215,7 +215,7 @@
     <% } %>
 
     <!-- TESTIMONIAL SECTION  -->
-    <% if (contentData.testimonials || featuredTestimonials) { %>
+    <% if (contentData.testimonials || (typeof featuredTestimonials !== 'undefined' && featuredTestimonials)) { %>
     <section class="reviews-section">
         <div class="reviews-container">
             <h2 class="reviews-heading">
@@ -243,7 +243,7 @@
                     // Use dynamic testimonials if available
                     if (contentData.testimonials && contentData.testimonials.items && contentData.testimonials.items.length > 0) {
                         testimonialsList = contentData.testimonials.items;
-                    } else if (featuredTestimonials && featuredTestimonials.length > 0) {
+                    } else if (typeof featuredTestimonials !== 'undefined' && featuredTestimonials && featuredTestimonials.length > 0) {
                         // Use database testimonials
                         featuredTestimonials.forEach(testimonial => {
                             const stars = '★'.repeat(testimonial.rating || 5) + '☆'.repeat(5 - (testimonial.rating || 5));

@@ -52,12 +52,6 @@ router.post('/home/update', adminController.updateHomeContent);
 // Bootcamp page management
 router.get('/bootcamp', bootcampController.getBootcampAdmin);
 router.post('/bootcamp', bootcampController.upload.any(), bootcampController.updateBootcampContent);
-router.post('/bootcamp/faq/add', bootcampController.addFaqItem);
-router.delete('/bootcamp/faq/:index', bootcampController.deleteFaqItem);
-
-// Bootcamp page management
-router.get('/bootcamp', bootcampController.getBootcampAdmin);
-router.post('/bootcamp', bootcampController.upload.any(), bootcampController.updateBootcampContent);
 router.post('/bootcamp/faq', bootcampController.addFaqItem);
 router.delete('/bootcamp/faq/:index', bootcampController.deleteFaqItem);
 
