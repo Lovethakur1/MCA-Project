@@ -13,6 +13,9 @@ RUN npm ci --only=production
 # Copy the current directory contents into the container at /usr/src/app
 COPY . .
 
+# Make the startup script executable
+RUN chmod +x start-with-admin.sh
+
 # Make port 3000 available to the world outside this container
 EXPOSE 3000
 
@@ -24,5 +27,5 @@ RUN adduser -S nextjs -u 1001
 RUN chown -R nextjs:nodejs /usr/src/app
 USER nextjs
 
-# Define the command to run your app
-CMD ["npm", "start"]
+# Define the command to run your app with admin setup
+CMD ["./start-with-admin.sh"]
