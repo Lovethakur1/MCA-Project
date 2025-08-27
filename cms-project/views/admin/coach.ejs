@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Mary Carmen Admin - MCA CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        .file-name {
+            background: #f3f4f6;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center">
+                    <button class="lg:hidden text-gray-600 hover:text-gray-900 mr-4" id="sidebar-toggle">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold text-gray-900">Coach Mary Carmen Management</h1>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="flex items-center text-gray-700 hover:text-gray-900" id="user-menu-button">
+                            <i class="fas fa-user-circle text-2xl mr-2"></i>
+                            <span>Admin</span>
+                            <i class="fas fa-chevron-down ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="p-6">
+            <!-- Success/Error Messages -->
+            <% if (typeof success !== 'undefined') { %>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                    <%= success %>
+                </div>
+            <% } %>
+            <% if (typeof error !== 'undefined') { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form action="/admin/coach" method="POST" enctype="multipart/form-data" class="space-y-8">
+
+                <!-- Hero Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-video mr-2 text-indigo-600"></i>
+                        Hero Section (Video Upload)
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Background Video</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" name="hero_backgroundVideo" id="hero_backgroundVideo" accept="video/*">
+                                <label for="hero_backgroundVideo" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Video File
+                                </label>
+                            </div>
+                            <div class="file-name" id="hero_backgroundVideo_name" style="display: none;"></div>
+                            <% if (content.hero.backgroundVideo) { %>
+                                <p class="text-sm text-gray-600 mt-2">Current: <%= content.hero.backgroundVideo %></p>
+                            <% } %>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Title (Optional)</label>
+                            <input type="text" name="hero_title" 
+                                   value="<%= content.hero.title || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter hero title">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle (Optional)</label>
+                            <input type="text" name="hero_subtitle" 
+                                   value="<%= content.hero.subtitle || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter hero subtitle">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Description (Optional)</label>
+                            <textarea name="hero_description" rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                      placeholder="Enter hero description"><%= content.hero.description || '' %></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Button Text (Optional)</label>
+                            <input type="text" name="hero_buttonText" 
+                                   value="<%= content.hero.buttonText || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Enter button text">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach Intro Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-user mr-2 text-indigo-600"></i>
+                        Coach Intro Section
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Main Title</label>
+                            <input type="text" name="intro_mainTitle" 
+                                   value="<%= content.intro.mainTitle || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Hello, I'm Your New Fitness Trainer!">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Main Image</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" name="intro_mainImage" id="intro_mainImage" accept="image/*">
+                                <label for="intro_mainImage" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Image
+                                </label>
+                            </div>
+                            <div class="file-name" id="intro_mainImage_name" style="display: none;"></div>
+                            <% if (content.intro.mainImage) { %>
+                                <p class="text-sm text-gray-600 mt-2">Current: <%= content.intro.mainImage %></p>
+                            <% } %>
+                        </div>
+                        
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Main Description</label>
+                            <textarea name="intro_mainDescription" rows="6"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                      placeholder="Enter main description about the coach"><%= content.intro.mainDescription || '' %></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Secondary Title</label>
+                            <input type="text" name="intro_secondaryTitle" 
+                                   value="<%= content.intro.secondaryTitle || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="From The Depths To The Power...">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Secondary Image</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" name="intro_secondaryImage" id="intro_secondaryImage" accept="image/*">
+                                <label for="intro_secondaryImage" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Image
+                                </label>
+                            </div>
+                            <div class="file-name" id="intro_secondaryImage_name" style="display: none;"></div>
+                            <% if (content.intro.secondaryImage) { %>
+                                <p class="text-sm text-gray-600 mt-2">Current: <%= content.intro.secondaryImage %></p>
+                            <% } %>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Secondary Description</label>
+                            <textarea name="intro_secondaryDescription" rows="6"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                      placeholder="Enter secondary description about the coach's journey"><%= content.intro.secondaryDescription || '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wave Video Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-video mr-2 text-indigo-600"></i>
+                        Wave Video Section
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Wave Background Video</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" name="wave_backgroundVideo" id="wave_backgroundVideo" accept="video/*">
+                                <label for="wave_backgroundVideo" class="bg-indigo-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-700">
+                                    <i class="fas fa-upload mr-2"></i>Choose Video File
+                                </label>
+                            </div>
+                            <div class="file-name" id="wave_backgroundVideo_name" style="display: none;"></div>
+                            <% if (content.wave.backgroundVideo) { %>
+                                <p class="text-sm text-gray-600 mt-2">Current: <%= content.wave.backgroundVideo %></p>
+                            <% } %>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Wave Section Title</label>
+                            <input type="text" name="wave_title" 
+                                   value="<%= content.wave.title || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="We are more than just a gym">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Wave Section Description</label>
+                            <textarea name="wave_description" rows="4"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                      placeholder="Enter wave section description"><%= content.wave.description || '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-question-circle mr-2 text-indigo-600"></i>
+                        FAQ Section
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">FAQ Title</label>
+                            <input type="text" name="faq_title" 
+                                   value="<%= content.faq.title || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Frequently Asked Questions">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">FAQ Subtitle</label>
+                            <input type="text" name="faq_subtitle" 
+                                   value="<%= content.faq.subtitle || '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="Get answers to common questions">
+                        </div>
+
+                        <!-- FAQ Items will be managed with JavaScript -->
+                        <div id="faq-items">
+                            <h3 class="text-lg font-medium text-gray-800 mb-2">FAQ Items</h3>
+                            <p class="text-sm text-gray-600 mb-4">Note: For detailed FAQ management, please use the FAQ management feature in the main admin panel.</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-md">
+                                <p class="text-sm text-gray-700">FAQ items can be managed through dynamic content management. The FAQ section will display questions and answers specific to the Coach Mary Carmen page.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 flex items-center">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Coach Content
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Quick Links -->
+            <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Links</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="/admin/blog-manager" class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-blog text-blue-600 text-xl mr-3"></i>
+                        <div>
+                            <h4 class="font-medium text-gray-900">Manage Blog Posts</h4>
+                            <p class="text-sm text-gray-600">Create and manage blog posts for the coach page</p>
+                        </div>
+                    </a>
+                    <a href="/coachmarycarmen" target="_blank" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                        <i class="fas fa-external-link-alt text-green-600 text-xl mr-3"></i>
+                        <div>
+                            <h4 class="font-medium text-gray-900">View Coach Page</h4>
+                            <p class="text-sm text-gray-600">See how the coach page looks to visitors</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for file input handling -->
+    <script>
+        // Handle file input display
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const fileName = this.files[0] ? this.files[0].name : '';
+                const nameDisplay = document.getElementById(this.id + '_name');
+                if (nameDisplay) {
+                    if (fileName) {
+                        nameDisplay.textContent = fileName;
+                        nameDisplay.style.display = 'block';
+                    } else {
+                        nameDisplay.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        // Sidebar toggle functionality
+        document.getElementById('sidebar-toggle')?.addEventListener('click', function() {
+            const sidebar = document.querySelector('.lg\\:ml-64');
+            sidebar.classList.toggle('ml-0');
+            sidebar.classList.toggle('ml-64');
+        });
+    </script>
+
+</body>
+</html>

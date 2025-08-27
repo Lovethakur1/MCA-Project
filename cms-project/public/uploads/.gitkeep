@@ -1,0 +1,4 @@
+# Uploads Directory
+This directory stores uploaded files from the CMS.
+
+In Docker deployment, this directory is mounted as a volume to ensure persistence across container restarts.
