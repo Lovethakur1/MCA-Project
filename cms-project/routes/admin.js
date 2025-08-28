@@ -26,6 +26,10 @@ router.use(authMiddleware.requireAuth);
 router.get('/', adminController.getDashboard);
 router.get('/dashboard', adminController.getDashboard);
 
+// API endpoints
+router.get('/api/stats', adminController.getStatsAPI);
+router.get('/api/recent', adminController.getRecentDataAPI);
+
 // Home page management
 router.get('/home', adminController.getHomeManager);
 router.post('/home/update', adminController.updateHomeContent);
@@ -110,6 +114,18 @@ router.post('/testimonials', adminController.createTestimonial);
 router.get('/testimonials/:id/edit', adminController.getEditTestimonial);
 router.post('/testimonials/:id', adminController.updateTestimonial);
 router.delete('/testimonials/:id', adminController.deleteTestimonial);
+router.get('/testimonials/page-content', adminController.getTestimonialPageContent);
+router.post('/testimonials/page-content', adminController.updateTestimonialPageContent);
+
+// Pricing management
+router.get('/pricing', adminController.getPricingManager);
+router.get('/pricing/page-content', adminController.getPricingPageContent);
+router.post('/pricing/page-content', adminController.updatePricingPageContent);
+router.get('/pricing/plans/new', adminController.getNewPricingPlan);
+router.post('/pricing/plans', adminController.createPricingPlan);
+router.get('/pricing/plans/:id/edit', adminController.getEditPricingPlan);
+router.post('/pricing/plans/:id', adminController.updatePricingPlan);
+router.delete('/pricing/plans/:id', adminController.deletePricingPlan);
 
 // Media management
 router.get('/media', adminController.getMediaManager);
@@ -124,5 +140,26 @@ router.get('/pages/:id/edit', adminController.getEditPage);
 router.post('/pages/:id', upload.any(), pageController.updatePage);
 router.delete('/pages/:id', pageController.deletePage);
 router.get('/pages/api/:id', pageController.getPage);
+
+// Newsletter management
+router.get('/newsletter', adminController.getNewsletterManager);
+router.get('/newsletter/subscribers', adminController.getNewsletterSubscribers);
+router.get('/newsletter/campaigns', adminController.getNewsletterCampaigns);
+router.post('/newsletter/campaigns', adminController.createCampaign);
+router.get('/newsletter/campaigns/:id', adminController.getCampaign);
+router.post('/newsletter/campaigns/:id', adminController.updateCampaign);
+router.delete('/newsletter/campaigns/:id', adminController.deleteCampaign);
+router.post('/newsletter/subscribers', adminController.addSubscriber);
+router.delete('/newsletter/subscribers/:id', adminController.removeSubscriber);
+
+// FAQ management
+router.get('/faq', adminController.getFaqManager);
+router.get('/faq/categories', adminController.getFaqCategories);
+router.post('/faq', adminController.createFaq);
+router.get('/faq/:id/edit', adminController.getEditFaq);
+router.post('/faq/:id', adminController.updateFaq);
+router.delete('/faq/:id', adminController.deleteFaq);
+router.post('/faq/categories', adminController.createFaqCategory);
+router.delete('/faq/categories/:id', adminController.deleteFaqCategory);
 
 module.exports = router;

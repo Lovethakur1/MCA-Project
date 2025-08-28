@@ -17,6 +17,14 @@ const TestimonialSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  video: {
+    type: String,
+    default: ''
+  },
+  videoThumbnail: {
+    type: String,
+    default: ''
+  },
   rating: {
     type: Number,
     min: 1,
@@ -30,6 +38,10 @@ const TestimonialSchema = new mongoose.Schema({
   published: {
     type: Boolean,
     default: true
+  },
+  order: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true

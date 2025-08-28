@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonial Page Content - MCA CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center">
+                    <button class="lg:hidden text-gray-600 hover:text-gray-900 mr-4" id="sidebar-toggle">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold text-gray-900">Testimonial Page Content</h1>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <a href="/admin/testimonials" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Testimonials
+                    </a>
+                    <a href="/testimonials" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        <i class="fas fa-external-link-alt mr-2"></i>Preview Page
+                    </a>
+                    <div class="relative">
+                        <button class="flex items-center text-gray-700 hover:text-gray-900" id="user-menu-button">
+                            <i class="fas fa-user-circle text-2xl mr-2"></i>
+                            <span>Admin</span>
+                            <i class="fas fa-chevron-down ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="p-6">
+            <!-- Success/Error Messages -->
+            <% if (typeof success !== 'undefined') { %>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                    <%= success %>
+                </div>
+            <% } %>
+            
+            <% if (typeof error !== 'undefined') { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <div class="max-w-6xl mx-auto">
+                <form action="/admin/testimonials/page-content" method="POST" class="space-y-8">
+                    
+                    <!-- Testimonial Hero Section -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                Testimonial Hero Section
+                            </h2>
+                            <p class="text-sm text-gray-600 mt-1">This section appears at the top of the testimonials page with featured testimonials</p>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 gap-6">
+                                <!-- Hero Title -->
+                                <div>
+                                    <label for="hero_title" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Hero Title
+                                    </label>
+                                    <input type="text" 
+                                           id="hero_title" 
+                                           name="hero[title]" 
+                                           value="<%= (content.hero && content.hero.title) ? content.hero.title : 'WHAT ARE OUR CUSTOMERS SAYING?' %>"
+                                           placeholder="WHAT ARE OUR CUSTOMERS SAYING?"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+
+                                <!-- Hero Subtitle -->
+                                <div>
+                                    <label for="hero_subtitle" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Hero Subtitle (Optional)
+                                    </label>
+                                    <input type="text" 
+                                           id="hero_subtitle" 
+                                           name="hero[subtitle]" 
+                                           value="<%= (content.hero && content.hero.subtitle) ? content.hero.subtitle : '' %>"
+                                           placeholder="Brief description for the hero section"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+
+                                <!-- Hero Background Color -->
+                                <div>
+                                    <label for="hero_bg_color" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Background Color (CSS)
+                                    </label>
+                                    <input type="text" 
+                                           id="hero_bg_color" 
+                                           name="hero[bg_color]" 
+                                           value="<%= (content.hero && content.hero.bg_color) ? content.hero.bg_color : '' %>"
+                                           placeholder="e.g., #f8f9fa, linear-gradient(...), or CSS class"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
+                                <div class="flex">
+                                    <i class="fas fa-lightbulb text-yellow-600 mt-0.5 mr-2"></i>
+                                    <div class="text-sm text-yellow-800">
+                                        <strong>Note:</strong> The hero section displays featured testimonials automatically. 
+                                        To control which testimonials appear here, mark them as "Featured" in the testimonial manager.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Testimonials Section -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                                <i class="fas fa-comments text-blue-500 mr-2"></i>
+                                Main Testimonials Section
+                            </h2>
+                            <p class="text-sm text-gray-600 mt-1">This section shows the grid of all published testimonials</p>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Section Intro Text -->
+                                <div>
+                                    <label for="section_intro" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Introduction Text
+                                    </label>
+                                    <input type="text" 
+                                           id="section_intro" 
+                                           name="section[intro]" 
+                                           value="<%= (content.section && content.section.intro) ? content.section.intro : 'In Their Own Words' %>"
+                                           placeholder="In Their Own Words"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+
+                                <!-- Section Title -->
+                                <div>
+                                    <label for="section_title" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Main Title
+                                    </label>
+                                    <input type="text" 
+                                           id="section_title" 
+                                           name="section[title]" 
+                                           value="<%= (content.section && content.section.title) ? content.section.title : 'Unveiling the True Customer Experience' %>"
+                                           placeholder="Unveiling the True Customer Experience"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+
+                                <!-- Section Highlighted Text -->
+                                <div>
+                                    <label for="section_highlight" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Highlighted Words (for styling)
+                                    </label>
+                                    <input type="text" 
+                                           id="section_highlight" 
+                                           name="section[highlight]" 
+                                           value="<%= (content.section && content.section.highlight) ? content.section.highlight : 'True Customer' %>"
+                                           placeholder="True Customer"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    <p class="text-xs text-gray-500 mt-1">These words will be styled differently in the title</p>
+                                </div>
+
+                                <!-- Section Description -->
+                                <div>
+                                    <label for="section_description" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Description
+                                    </label>
+                                    <input type="text" 
+                                           id="section_description" 
+                                           name="section[description]" 
+                                           value="<%= (content.section && content.section.description) ? content.section.description : 'Customers provide testimonials with descriptions of satisfaction.' %>"
+                                           placeholder="Customers provide testimonials with descriptions of satisfaction."
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+                            </div>
+
+                            <!-- Call to Action -->
+                            <div class="mt-6">
+                                <h3 class="text-sm font-medium text-gray-700 mb-3">Call to Action (Optional)</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="section_cta_text" class="block text-sm font-medium text-gray-700 mb-2">
+                                            CTA Button Text
+                                        </label>
+                                        <input type="text" 
+                                               id="section_cta_text" 
+                                               name="section[cta_text]" 
+                                               value="<%= (content.section && content.section.cta_text) ? content.section.cta_text : '' %>"
+                                               placeholder="e.g., Share Your Story"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label for="section_cta_link" class="block text-sm font-medium text-gray-700 mb-2">
+                                            CTA Button Link
+                                        </label>
+                                        <input type="url" 
+                                               id="section_cta_link" 
+                                               name="section[cta_link]" 
+                                               value="<%= (content.section && content.section.cta_link) ? content.section.cta_link : '' %>"
+                                               placeholder="e.g., /contact"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Page Content
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Preview Section -->
+                <div class="mt-8 bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i class="fas fa-eye text-green-500 mr-2"></i>
+                            Content Management Tips
+                        </h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="font-medium text-gray-900 mb-2">Hero Section</h3>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Features 2 rotating testimonials marked as "Featured"</li>
+                                    <li>• Title should be compelling and attention-grabbing</li>
+                                    <li>• Keep hero titles short and impactful</li>
+                                    <li>• Background color can be hex, gradient, or CSS class</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900 mb-2">Main Section</h3>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Displays all published testimonials in a grid</li>
+                                    <li>• Introduction text should set context</li>
+                                    <li>• Highlighted words will be styled differently</li>
+                                    <li>• CTA button is optional but recommended</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Include Sidebar JavaScript -->
+    <%- include('partials/sidebar-script') %>
+</body>
+</html>

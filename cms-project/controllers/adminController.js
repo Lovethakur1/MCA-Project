@@ -4,6 +4,7 @@ const BlogPost = require('../models/BlogPost');
 const Testimonial = require('../models/Testimonial');
 const Contact = require('../models/Contact');
 const Page = require('../models/Page');
+const { PricingPlan, PricingTab } = require('../models/Pricing');
 const bcrypt = require('bcryptjs');
 const qs = require('qs');
 
@@ -102,10 +103,70 @@ exports.getDashboard = async (req, res) => {
     });
   } catch (error) {
     console.error('Dashboard error:', error);
-    res.status(500).render('error', { 
-      title: 'Error',
-      error: 'Failed to load dashboard' 
+    res.render('admin/dashboard', {
+      title: 'Admin Dashboard',
+      error: 'Failed to load dashboard data',
+      stats: {
+        blogPosts: 0,
+        testimonials: 0,
+        contentItems: 0,
+        contacts: 0,
+        newContacts: 0
+      },
+      recentPosts: [],
+      recentContacts: [],
+      content: {
+        hero: {},
+        services: {},
+        about: {},
+        contact: {},
+        benefits: {},
+        newsletter: {},
+        faq: {},
+        testimonials: {},
+        concept: {}
+      }
     });
+  }
+};
+
+// API endpoint for live stats updates
+exports.getStatsAPI = async (req, res) => {
+  try {
+    const blogCount = await BlogPost.countDocuments();
+    const testimonialCount = await Testimonial.countDocuments();
+    const contentCount = await Content.countDocuments();
+    const contactCount = await Contact.countDocuments();
+    const newContactCount = await Contact.countDocuments({ status: 'new' });
+    
+    res.json({
+      blogPosts: blogCount,
+      testimonials: testimonialCount,
+      contentItems: contentCount,
+      contacts: contactCount,
+      newContacts: newContactCount,
+      lastUpdated: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Stats API error:', error);
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+};
+
+// API endpoint for recent data
+exports.getRecentDataAPI = async (req, res) => {
+  try {
+    const recentPosts = await BlogPost.find().sort({ createdAt: -1 }).limit(5);
+    const recentContacts = await Contact.find().sort({ createdAt: -1 }).limit(5);
+    
+    res.json({
+      recentPosts: recentPosts,
+      recentContacts: recentContacts,
+      lastUpdated: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Recent data API error:', error);
+    res.status(500).json({ error: 'Failed to fetch recent data' });
   }
 };
 
@@ -260,7 +321,9 @@ exports.getTestimonialManager = async (req, res) => {
     
     res.render('admin/testimonials', {
       title: 'Testimonial Manager',
-      testimonials
+      testimonials,
+      success: req.query.success,
+      error: req.query.error
     });
   } catch (error) {
     console.error('Testimonial manager error:', error);
@@ -281,13 +344,15 @@ exports.getNewTestimonial = (req, res) => {
 
 exports.createTestimonial = async (req, res) => {
   try {
-    const { name, title, content, image, rating, featured, published } = req.body;
+    const { name, title, content, image, video, videoThumbnail, rating, featured, published } = req.body;
     
     const testimonial = new Testimonial({
       name,
       title,
       content,
       image,
+      video,
+      videoThumbnail,
       rating: parseInt(rating),
       featured: featured === 'on',
       published: published === 'on'
@@ -326,13 +391,15 @@ exports.getEditTestimonial = async (req, res) => {
 
 exports.updateTestimonial = async (req, res) => {
   try {
-    const { name, title, content, image, rating, featured, published } = req.body;
+    const { name, title, content, image, video, videoThumbnail, rating, featured, published } = req.body;
     
     await Testimonial.findByIdAndUpdate(req.params.id, {
       name,
       title,
       content,
       image,
+      video,
+      videoThumbnail,
       rating: parseInt(rating),
       featured: featured === 'on',
       published: published === 'on'
@@ -352,6 +419,254 @@ exports.deleteTestimonial = async (req, res) => {
   } catch (error) {
     console.error('Testimonial delete error:', error);
     res.status(500).json({ error: 'Failed to delete testimonial' });
+  }
+};
+
+exports.getTestimonialPageContent = async (req, res) => {
+  try {
+    // Get content data for testimonial page
+    const contentData = await Content.find({ page: 'testimonial' });
+    
+    // Organize content data by section
+    const content = {};
+    contentData.forEach(item => {
+      if (!content[item.section]) {
+        content[item.section] = {};
+      }
+      content[item.section][item.key] = item.value;
+    });
+
+    res.render('admin/testimonial-page-content', {
+      title: 'Testimonial Page Content',
+      content,
+      success: req.query.success,
+      error: req.query.error
+    });
+  } catch (error) {
+    console.error('Testimonial page content error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load testimonial page content' 
+    });
+  }
+};
+
+exports.updateTestimonialPageContent = async (req, res) => {
+  try {
+    const { hero, section } = req.body;
+    
+    // Update hero section content
+    if (hero) {
+      for (const [key, value] of Object.entries(hero)) {
+        await Content.findOneAndUpdate(
+          { page: 'testimonial', section: 'hero', key },
+          { value, type: 'text' },
+          { upsert: true, new: true }
+        );
+      }
+    }
+    
+    // Update main section content
+    if (section) {
+      for (const [key, value] of Object.entries(section)) {
+        await Content.findOneAndUpdate(
+          { page: 'testimonial', section: 'section', key },
+          { value, type: 'text' },
+          { upsert: true, new: true }
+        );
+      }
+    }
+    
+    res.redirect('/admin/testimonials/page-content?success=Testimonial page content updated');
+  } catch (error) {
+    console.error('Testimonial page content update error:', error);
+    res.redirect('/admin/testimonials/page-content?error=Failed to update testimonial page content');
+  }
+};
+
+// Pricing Management
+exports.getPricingManager = async (req, res) => {
+  try {
+    const pricingPlans = await PricingPlan.find().sort({ category: 1, sortOrder: 1 });
+    const pricingTabs = await PricingTab.find().sort({ sortOrder: 1 });
+    
+    res.render('admin/pricing-manager', {
+      title: 'Pricing Manager',
+      pricingPlans,
+      pricingTabs,
+      success: req.query.success,
+      error: req.query.error
+    });
+  } catch (error) {
+    console.error('Pricing manager error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load pricing manager' 
+    });
+  }
+};
+
+exports.getPricingPageContent = async (req, res) => {
+  try {
+    // Get content data for pricing page
+    const contentData = await Content.find({ page: 'price' });
+    
+    // Organize content data by section
+    const content = {};
+    contentData.forEach(item => {
+      if (!content[item.section]) {
+        content[item.section] = {};
+      }
+      content[item.section][item.key] = item.value;
+    });
+
+    res.render('admin/pricing-page-content', {
+      title: 'Pricing Page Content',
+      content,
+      success: req.query.success,
+      error: req.query.error
+    });
+  } catch (error) {
+    console.error('Pricing page content error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load pricing page content' 
+    });
+  }
+};
+
+exports.updatePricingPageContent = async (req, res) => {
+  try {
+    const { hero, pricing } = req.body;
+    
+    // Update hero section content
+    if (hero) {
+      for (const [key, value] of Object.entries(hero)) {
+        await Content.findOneAndUpdate(
+          { page: 'price', section: 'hero', key },
+          { value, type: 'text' },
+          { upsert: true, new: true }
+        );
+      }
+    }
+    
+    // Update pricing section content
+    if (pricing) {
+      for (const [key, value] of Object.entries(pricing)) {
+        await Content.findOneAndUpdate(
+          { page: 'price', section: 'pricing', key },
+          { value, type: 'text' },
+          { upsert: true, new: true }
+        );
+      }
+    }
+    
+    res.redirect('/admin/pricing/page-content?success=Pricing page content updated');
+  } catch (error) {
+    console.error('Pricing page content update error:', error);
+    res.redirect('/admin/pricing/page-content?error=Failed to update pricing page content');
+  }
+};
+
+exports.getNewPricingPlan = (req, res) => {
+  res.render('admin/pricing-plan-form', {
+    title: 'New Pricing Plan',
+    plan: null,
+    action: '/admin/pricing/plans'
+  });
+};
+
+exports.createPricingPlan = async (req, res) => {
+  try {
+    const { 
+      category, title, description, duration, price, location, 
+      icon, buttonText, buttonLink, features, popular, sortOrder, published 
+    } = req.body;
+    
+    const plan = new PricingPlan({
+      category,
+      title,
+      description,
+      duration,
+      price,
+      location,
+      icon: icon || 'fas fa-clock',
+      buttonText: buttonText || 'Book Now',
+      buttonLink: buttonLink || '#',
+      features: features ? features.split('\n').filter(f => f.trim()) : [],
+      popular: popular === 'on',
+      sortOrder: parseInt(sortOrder) || 0,
+      published: published === 'on'
+    });
+    
+    await plan.save();
+    
+    res.redirect('/admin/pricing?success=Pricing plan created');
+  } catch (error) {
+    console.error('Pricing plan creation error:', error);
+    res.redirect('/admin/pricing?error=Failed to create pricing plan');
+  }
+};
+
+exports.getEditPricingPlan = async (req, res) => {
+  try {
+    const plan = await PricingPlan.findById(req.params.id);
+    
+    if (!plan) {
+      return res.status(404).render('404', { title: 'Pricing Plan Not Found' });
+    }
+    
+    res.render('admin/pricing-plan-form', {
+      title: 'Edit Pricing Plan',
+      plan,
+      action: `/admin/pricing/plans/${plan._id}`
+    });
+  } catch (error) {
+    console.error('Pricing plan edit error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load pricing plan' 
+    });
+  }
+};
+
+exports.updatePricingPlan = async (req, res) => {
+  try {
+    const { 
+      category, title, description, duration, price, location, 
+      icon, buttonText, buttonLink, features, popular, sortOrder, published 
+    } = req.body;
+    
+    await PricingPlan.findByIdAndUpdate(req.params.id, {
+      category,
+      title,
+      description,
+      duration,
+      price,
+      location,
+      icon: icon || 'fas fa-clock',
+      buttonText: buttonText || 'Book Now',
+      buttonLink: buttonLink || '#',
+      features: features ? features.split('\n').filter(f => f.trim()) : [],
+      popular: popular === 'on',
+      sortOrder: parseInt(sortOrder) || 0,
+      published: published === 'on'
+    });
+    
+    res.redirect('/admin/pricing?success=Pricing plan updated');
+  } catch (error) {
+    console.error('Pricing plan update error:', error);
+    res.redirect('/admin/pricing?error=Failed to update pricing plan');
+  }
+};
+
+exports.deletePricingPlan = async (req, res) => {
+  try {
+    await PricingPlan.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Pricing plan delete error:', error);
+    res.status(500).json({ error: 'Failed to delete pricing plan' });
   }
 };
 
@@ -1337,5 +1652,390 @@ exports.getEditPage = async (req, res) => {
       title: 'Error',
       error: 'Failed to load page for editing' 
     });
+  }
+};
+
+// Newsletter Management
+exports.getNewsletterManager = async (req, res) => {
+  try {
+    // For now, return mock data. In a real app, you'd fetch from a Newsletter model
+    const stats = {
+      totalSubscribers: 1234,
+      activeCampaigns: 3,
+      openRate: 24.5,
+      clickRate: 3.2
+    };
+
+    res.render('admin/newsletter', {
+      title: 'Newsletter Management',
+      stats,
+      layout: 'admin/layout'
+    });
+  } catch (error) {
+    console.error('Newsletter manager error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load newsletter manager' 
+    });
+  }
+};
+
+exports.getNewsletterSubscribers = async (req, res) => {
+  try {
+    // Mock data for subscribers
+    const subscribers = [
+      {
+        id: 1,
+        email: 'john.doe@email.com',
+        name: 'John Doe',
+        subscribed_at: new Date(),
+        status: 'active'
+      },
+      {
+        id: 2,
+        email: 'sarah.miller@email.com',
+        name: 'Sarah Miller',
+        subscribed_at: new Date(),
+        status: 'active'
+      },
+      {
+        id: 3,
+        email: 'mike.johnson@email.com',
+        name: 'Mike Johnson',
+        subscribed_at: new Date(),
+        status: 'pending'
+      }
+    ];
+
+    res.render('admin/newsletter-subscribers', {
+      title: 'Newsletter Subscribers',
+      subscribers,
+      layout: 'admin/layout'
+    });
+  } catch (error) {
+    console.error('Newsletter subscribers error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load newsletter subscribers' 
+    });
+  }
+};
+
+exports.getNewsletterCampaigns = async (req, res) => {
+  try {
+    // Mock data for campaigns
+    const campaigns = [
+      {
+        id: 1,
+        name: 'Weekly Fitness Tips',
+        subject: 'Your Weekly Dose of Fitness Motivation',
+        status: 'active',
+        sent_at: new Date(),
+        open_rate: 25.3,
+        click_rate: 3.8
+      },
+      {
+        id: 2,
+        name: 'New Blog Post Alert',
+        subject: 'Check out our latest fitness insights',
+        status: 'draft',
+        created_at: new Date()
+      }
+    ];
+
+    res.render('admin/newsletter-campaigns', {
+      title: 'Newsletter Campaigns',
+      campaigns,
+      layout: 'admin/layout'
+    });
+  } catch (error) {
+    console.error('Newsletter campaigns error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load newsletter campaigns' 
+    });
+  }
+};
+
+exports.createCampaign = async (req, res) => {
+  try {
+    const { name, subject, content, type } = req.body;
+    
+    // In a real app, save to database
+    console.log('Creating campaign:', { name, subject, type });
+    
+    res.redirect('/admin/newsletter/campaigns?success=Campaign created successfully');
+  } catch (error) {
+    console.error('Create campaign error:', error);
+    res.redirect('/admin/newsletter/campaigns?error=Failed to create campaign');
+  }
+};
+
+exports.getCampaign = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Mock campaign data
+    const campaign = {
+      id: id,
+      name: 'Weekly Fitness Tips',
+      subject: 'Your Weekly Dose of Fitness Motivation',
+      content: '<p>Hello fitness enthusiasts!</p><p>Here are your weekly tips...</p>',
+      status: 'active'
+    };
+
+    res.render('admin/edit-campaign', {
+      title: 'Edit Campaign',
+      campaign,
+      layout: 'admin/layout'
+    });
+  } catch (error) {
+    console.error('Get campaign error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load campaign' 
+    });
+  }
+};
+
+exports.updateCampaign = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, subject, content } = req.body;
+    
+    // In a real app, update in database
+    console.log('Updating campaign:', id, { name, subject });
+    
+    res.redirect('/admin/newsletter/campaigns?success=Campaign updated successfully');
+  } catch (error) {
+    console.error('Update campaign error:', error);
+    res.redirect('/admin/newsletter/campaigns?error=Failed to update campaign');
+  }
+};
+
+exports.deleteCampaign = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // In a real app, delete from database
+    console.log('Deleting campaign:', id);
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete campaign error:', error);
+    res.status(500).json({ error: 'Failed to delete campaign' });
+  }
+};
+
+exports.addSubscriber = async (req, res) => {
+  try {
+    const { email, name } = req.body;
+    
+    // In a real app, save to database
+    console.log('Adding subscriber:', { email, name });
+    
+    res.redirect('/admin/newsletter/subscribers?success=Subscriber added successfully');
+  } catch (error) {
+    console.error('Add subscriber error:', error);
+    res.redirect('/admin/newsletter/subscribers?error=Failed to add subscriber');
+  }
+};
+
+exports.removeSubscriber = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // In a real app, remove from database
+    console.log('Removing subscriber:', id);
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Remove subscriber error:', error);
+    res.status(500).json({ error: 'Failed to remove subscriber' });
+  }
+};
+
+// FAQ Management
+exports.getFaqManager = async (req, res) => {
+  try {
+    // Mock FAQ data
+    const faqs = [
+      {
+        id: 1,
+        question: 'What equipment do I need to get started?',
+        answer: 'You don\'t need much to get started! Basic equipment includes comfortable workout clothes, a yoga mat, and some water.',
+        category: 'Equipment',
+        priority: 'high',
+        views: 342,
+        helpful_votes: 28,
+        updated_at: new Date()
+      },
+      {
+        id: 2,
+        question: 'How much do personal training sessions cost?',
+        answer: 'Our personal training sessions start at $75 per session. We offer package deals and monthly memberships.',
+        category: 'Pricing',
+        priority: 'high',
+        views: 1200,
+        helpful_votes: 89,
+        updated_at: new Date()
+      },
+      {
+        id: 3,
+        question: 'Can I cancel my membership anytime?',
+        answer: 'Yes! We believe in flexible memberships. You can cancel anytime with a 30-day notice.',
+        category: 'General',
+        priority: 'medium',
+        views: 876,
+        helpful_votes: 67,
+        updated_at: new Date()
+      }
+    ];
+
+    const categories = [
+      { id: 1, name: 'General', count: 8 },
+      { id: 2, name: 'Pricing', count: 6 },
+      { id: 3, name: 'Training', count: 5 },
+      { id: 4, name: 'Nutrition', count: 3 },
+      { id: 5, name: 'Equipment', count: 2 }
+    ];
+
+    const stats = {
+      totalFaqs: 24,
+      categories: 5,
+      mostPopular: 'Pricing FAQ'
+    };
+
+    res.render('admin/faq', {
+      title: 'FAQ Management',
+      faqs,
+      categories,
+      stats,
+      layout: 'admin/layout'
+    });
+  } catch (error) {
+    console.error('FAQ manager error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load FAQ manager' 
+    });
+  }
+};
+
+exports.getFaqCategories = async (req, res) => {
+  try {
+    const categories = [
+      { id: 1, name: 'General', count: 8 },
+      { id: 2, name: 'Pricing', count: 6 },
+      { id: 3, name: 'Training', count: 5 },
+      { id: 4, name: 'Nutrition', count: 3 },
+      { id: 5, name: 'Equipment', count: 2 }
+    ];
+
+    res.json(categories);
+  } catch (error) {
+    console.error('Get FAQ categories error:', error);
+    res.status(500).json({ error: 'Failed to load categories' });
+  }
+};
+
+exports.createFaq = async (req, res) => {
+  try {
+    const { question, answer, category, priority } = req.body;
+    
+    // In a real app, save to database
+    console.log('Creating FAQ:', { question, answer, category, priority });
+    
+    res.redirect('/admin/faq?success=FAQ created successfully');
+  } catch (error) {
+    console.error('Create FAQ error:', error);
+    res.redirect('/admin/faq?error=Failed to create FAQ');
+  }
+};
+
+exports.getEditFaq = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Mock FAQ data
+    const faq = {
+      id: id,
+      question: 'What equipment do I need to get started?',
+      answer: 'You don\'t need much to get started! Basic equipment includes comfortable workout clothes, a yoga mat, and some water.',
+      category: 'Equipment',
+      priority: 'high'
+    };
+
+    const categories = ['General', 'Pricing', 'Training', 'Nutrition', 'Equipment'];
+
+    res.render('admin/edit-faq', {
+      title: 'Edit FAQ',
+      faq,
+      categories,
+      layout: 'admin/layout'
+    });
+  } catch (error) {
+    console.error('Get edit FAQ error:', error);
+    res.status(500).render('error', { 
+      title: 'Error',
+      error: 'Failed to load FAQ for editing' 
+    });
+  }
+};
+
+exports.updateFaq = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { question, answer, category, priority } = req.body;
+    
+    // In a real app, update in database
+    console.log('Updating FAQ:', id, { question, answer, category, priority });
+    
+    res.redirect('/admin/faq?success=FAQ updated successfully');
+  } catch (error) {
+    console.error('Update FAQ error:', error);
+    res.redirect('/admin/faq?error=Failed to update FAQ');
+  }
+};
+
+exports.deleteFaq = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // In a real app, delete from database
+    console.log('Deleting FAQ:', id);
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete FAQ error:', error);
+    res.status(500).json({ error: 'Failed to delete FAQ' });
+  }
+};
+
+exports.createFaqCategory = async (req, res) => {
+  try {
+    const { name } = req.body;
+    
+    // In a real app, save to database
+    console.log('Creating FAQ category:', { name });
+    
+    res.redirect('/admin/faq?success=Category created successfully');
+  } catch (error) {
+    console.error('Create FAQ category error:', error);
+    res.redirect('/admin/faq?error=Failed to create category');
+  }
+};
+
+exports.deleteFaqCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // In a real app, delete from database
+    console.log('Deleting FAQ category:', id);
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete FAQ category error:', error);
+    res.status(500).json({ error: 'Failed to delete category' });
   }
 };

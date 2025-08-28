@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing</title>
+    <title><%= title %> | <%= (typeof siteSettings !== 'undefined' && siteSettings && siteSettings.siteName) ? siteSettings.siteName : 'MCA' %></title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,16 +20,16 @@
 
     <section class="health-insurance-section">
         <div class="health-insurance-content">
-            <h1>We are recognized<br>health insurance<br>companies</h1>
-            <p>We are QualitTop certified for personal training and fitness and are therefore recognised by twenty
-                health insurance companies. This means that we have been audited for customer care and trainer
-                qualifications and that we have a defined safety standard, an emergency organization, a training concept
-                and a training plan. You can find out here how much each health insurance company will cover for your
-                fitness and personal training per calendar year. Open the PDF document for more details. If you have any
-                specific questions, you can contact us using the contact form or call us directly.</p>
+            <h1><%= (content.hero && content.hero.title) ? content.hero.title : 'We are recognized<br>health insurance<br>companies' %></h1>
+            <p><%= (content.hero && content.hero.description) ? content.hero.description : 'We are QualitTop certified for personal training and fitness and are therefore recognised by twenty health insurance companies. This means that we have been audited for customer care and trainer qualifications and that we have a defined safety standard, an emergency organization, a training concept and a training plan. You can find out here how much each health insurance company will cover for your fitness and personal training per calendar year. Open the PDF document for more details. If you have any specific questions, you can contact us using the contact form or call us directly.' %></p>
+            <% if (content.hero && content.hero.cta_text && content.hero.cta_link) { %>
+                <a href="<%= content.hero.cta_link %>" class="hero-cta-button">
+                    <%= content.hero.cta_text %>
+                </a>
+            <% } %>
         </div>
         <div class="health-insurance-image-container">
-            <img src="media\333fed2d984bcf5ebeb013e02a7cac6abaaaaf0c.png" alt="Fit man and woman holding dumbbells">
+            <img src="<%= (content.hero && content.hero.image) ? content.hero.image : 'media/333fed2d984bcf5ebeb013e02a7cac6abaaaaf0c.png' %>" alt="Fit man and woman holding dumbbells">
         </div>
     </section>
 
@@ -37,191 +37,91 @@
 
     <section class="pricing-section">
         <div class="pp">
-            <h1 class="pricing-title">Prices for Personal Training in Basel</h1>
+            <h1 class="pricing-title"><%= (content.pricing && content.pricing.title) ? content.pricing.title : 'Prices for Personal Training in Basel' %></h1>
+            <% if (content.pricing && content.pricing.subtitle) { %>
+                <p class="pricing-subtitle"><%= content.pricing.subtitle %></p>
+            <% } %>
 
             <div class="pricing-tabs">
-                <button class="tab-button active" data-tab="personal-training">Personal Training</button>
-                <button class="tab-button" data-tab="partner-personal-training">Partner Personal Training</button>
-                <button class="tab-button" data-tab="senior-personal-training">Senior Personal Training</button>
-                <button class="tab-button" data-tab="domizil-personal-training">Domizil Personal Training</button>
-                <button class="tab-button" data-tab="gesundheits-coaching">Gesundheits-Coaching</button>
+                <% if (pricingTabs && pricingTabs.length > 0) { %>
+                    <% pricingTabs.forEach((tab, index) => { %>
+                        <button class="tab-button <%= index === 0 ? 'active' : '' %>" data-tab="<%= tab.slug %>"><%= tab.title %></button>
+                    <% }); %>
+                <% } else { %>
+                    <button class="tab-button active" data-tab="personal-training">Personal Training</button>
+                    <button class="tab-button" data-tab="partner-personal-training">Partner Personal Training</button>
+                    <button class="tab-button" data-tab="senior-personal-training">Senior Personal Training</button>
+                    <button class="tab-button" data-tab="domizil-personal-training">Domizil Personal Training</button>
+                    <button class="tab-button" data-tab="gesundheits-coaching">Gesundheits-Coaching</button>
+                <% } %>
             </div>
 
             <div class="pricing-content">
-                <div id="personal-training" class="tab-pane active">
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
-                        <div class="card-title">Einzelsession</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Stunden</div>
-                        <div class="card-price">CHF 150.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
-                        <button class="book-now-button">Book Now</button>
+                <% if (pricingTabs && pricingTabs.length > 0) { %>
+                    <% pricingTabs.forEach((tab, tabIndex) => { %>
+                        <div id="<%= tab.slug %>" class="tab-pane <%= tabIndex === 0 ? 'active' : '' %>">
+                            <% 
+                            const tabPlans = pricingPlans.filter(plan => plan.category === tab.category && plan.isActive);
+                            if (tabPlans.length > 0) {
+                                tabPlans.forEach(plan => { %>
+                                    <div class="price-card">
+                                        <div class="card-icon">
+                                            <% if (plan.duration) { %>
+                                                <i class="far fa-clock"></i> <%= plan.duration %>
+                                            <% } %>
+                                        </div>
+                                        <div class="card-title"><%= plan.title %></div>
+                                        <% if (plan.description) { %>
+                                            <div class="card-description">
+                                                <% if (plan.sessions) { %>
+                                                    <i class="fas fa-redo-alt"></i> <%= plan.sessions %>
+                                                <% } else { %>
+                                                    <%= plan.description %>
+                                                <% } %>
+                                            </div>
+                                        <% } %>
+                                        <div class="card-price">CHF <%= plan.price %>.-</div>
+                                        <% if (plan.location) { %>
+                                            <div class="card-location"><i class="fas fa-map-marker-alt"></i> <%= plan.location %></div>
+                                        <% } %>
+                                        <% if (plan.features && plan.features.length > 0) { %>
+                                            <div class="card-features">
+                                                <% plan.features.forEach(feature => { %>
+                                                    <div class="feature-item"><i class="fas fa-check"></i> <%= feature %></div>
+                                                <% }); %>
+                                            </div>
+                                        <% } %>
+                                        <button class="book-now-button">Book Now</button>
+                                    </div>
+                                <% });
+                            } else { %>
+                                <div class="no-plans-message">
+                                    <p>No pricing plans available for this category.</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <!-- Fallback to static content if no dynamic data -->
+                    <div id="personal-training" class="tab-pane active">
+                        <div class="price-card">
+                            <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
+                            <div class="card-title">Einzelsession</div>
+                            <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Stunden</div>
+                            <div class="card-price">CHF 150.-</div>
+                            <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
+                            <button class="book-now-button">Book Now</button>
+                        </div>
+                        <div class="price-card">
+                            <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
+                            <div class="card-title">10er Abo</div>
+                            <div class="card-description"><i class="fas fa-redo-alt"></i> 10 Stunden</div>
+                            <div class="card-price">CHF 1500.-</div>
+                            <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
+                            <button class="book-now-button">Book Now</button>
+                        </div>
                     </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
-                        <div class="card-title">10er Abo</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 10 Stunden</div>
-                        <div class="card-price">CHF 1500.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
-                        <div class="card-title">20er Abo</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 20 Stunden</div>
-                        <div class="card-price">CHF 3000.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
-                        <div class="card-title">30er Abo</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 30 Stunden</div>
-                        <div class="card-price">CHF 4500.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                </div>
-
-                <div id="partner-personal-training" class="tab-pane">
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
-                        <div class="card-title">Partner Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Stunde</div>
-                        <div class="card-price">CHF 200.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                </div>
-
-                <div id="senior-personal-training" class="tab-pane">
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 45 min</div>
-                        <div class="card-title">Senior Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Stunde</div>
-                        <div class="card-price">CHF 120.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Private Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                </div>
-
-                <div id="domizil-personal-training" class="tab-pane">
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 60 min</div>
-                        <div class="card-title">Domizil Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Stunde</div>
-                        <div class="card-price">CHF 250.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Your Location</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                </div>
-
-                <div id="gesundheits-coaching" class="tab-pane">
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                    <div class="price-card">
-                        <div class="card-icon"><i class="far fa-clock"></i> 90 min</div>
-                        <div class="card-title">Coaching Session</div>
-                        <div class="card-description"><i class="fas fa-redo-alt"></i> 1 Session</div>
-                        <div class="card-price">CHF 180.-</div>
-                        <div class="card-location"><i class="fas fa-map-marker-alt"></i> Online/Studio</div>
-                        <button class="book-now-button">Book Now</button>
-                    </div>
-                </div>
+                <% } %>
             </div>
         </div>
     </section>

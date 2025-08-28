@@ -5,7 +5,12 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "build": "echo 'No build step required for Express.js app' && npm install --production",
+    "postinstall": "npm run create-admin",
+    "create-admin": "node scripts/create-admin.js",
+    "test": "echo 'No tests specified'",
+    "deploy": "npm install --production && npm run create-admin && npm start"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

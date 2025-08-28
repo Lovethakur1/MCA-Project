@@ -2,6 +2,7 @@ const Content = require('../models/Content');
 const Contact = require('../models/Contact');
 const Page = require('../models/Page');
 const Testimonial = require('../models/Testimonial');
+const { PricingPlan } = require('../models/Pricing');
 
 exports.getBootcampPage = async (req, res) => {
   try {
@@ -147,6 +148,20 @@ exports.getPricePage = async (req, res) => {
       contentData[item.section][item.key] = item.value;
     });
 
+    // Get pricing plans organized by category
+    const pricingPlans = await PricingPlan.find({ published: true })
+      .sort({ category: 1, sortOrder: 1 })
+      .lean();
+
+    // Organize plans by category
+    const plansByCategory = {};
+    pricingPlans.forEach(plan => {
+      if (!plansByCategory[plan.category]) {
+        plansByCategory[plan.category] = [];
+      }
+      plansByCategory[plan.category].push(plan);
+    });
+
     // Get global content
     const navbarContent = await Content.find({ page: 'global', section: 'navbar' }).lean();
     const footerContent = await Content.find({ page: 'global', section: 'footer' }).lean();
@@ -170,6 +185,7 @@ exports.getPricePage = async (req, res) => {
     res.render('price', {
       title: 'Pricing',
       content: contentData,
+      pricingPlans: plansByCategory,
       navbar,
       footer,
       siteSettings: site

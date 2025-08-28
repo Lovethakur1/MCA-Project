@@ -15,39 +15,57 @@
     
   <!-- TESTIMONIAL HERO SECTION  -->
 
-    <div class="th-test">
+    <div class="th-test" <% if (heroSection.bg_color) { %>style="background: <%= heroSection.bg_color %>"<% } %>>
         <div class="th-test1">
-            <h1>WHAT ARE OUR <br> CUSTOMERS SAYING?</h1>
+            <h1><%= heroSection.title || 'WHAT ARE OUR CUSTOMERS SAYING?' %></h1>
+            <% if (heroSection.subtitle) { %>
+                <p class="hero-subtitle"><%= heroSection.subtitle %></p>
+            <% } %>
         </div>
 
         <div class="th-test2">
             <div class="th-testin">
                 <div class="th-testinin">
-                    <div class="th-t1">
-                        <div class="th-testcomment">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem dicta odio nisi
-                                voluptatem, consequuntur, assumenda itaque officia voluptates libero deserunt
-                                consectetur doloribus veritatis? Odit ullam laboriosam sequi nobis tempore animi?</p>
+                    <% if (featuredTestimonials && featuredTestimonials.length > 0) { %>
+                        <% featuredTestimonials.slice(0, 2).forEach((testimonial, index) => { %>
+                            <div class="th-t<%= index + 1 %>">
+                                <div class="th-testcomment">
+                                    <p><%= testimonial.content %></p>
+                                </div>
+                                <div class="th-testclient">
+                                    <img src="<%= testimonial.image || 'media/blog1.jpg' %>" width="80px" alt="<%= testimonial.name %>" />
+                                    <p><strong><%= testimonial.name.toUpperCase() %></strong><br><%= testimonial.title %></p>
+                                    <i class="fa-solid fa-quote-left"></i>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="th-t1">
+                            <div class="th-testcomment">
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem dicta odio nisi
+                                    voluptatem, consequuntur, assumenda itaque officia voluptates libero deserunt
+                                    consectetur doloribus veritatis? Odit ullam laboriosam sequi nobis tempore animi?</p>
+                            </div>
+                            <div class="th-testclient">
+                                <img src="media/blog1.jpg" width="80px" />
+                                <p><strong>SERAH YOLAND R.</strong><br>CEO Founder</p>
+                                <i class="fa-solid fa-quote-left"></i>
+                            </div>
                         </div>
-                        <div class="th-testclient">
-                            <img src="media/blog1.jpg" width="80px" />
-                            <p><strong>SERAH YOLAND R.</strong><br>CEO Founder</p>
-                            <i class="fa-solid fa-quote-left"></i>
-                        </div>
-                    </div>
 
-                    <div class="th-t2">
-                        <div class="th-testcomment">
-                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis aspernatur magni
-                                tenetur, dolorum exercitationem molestiae ex accusantium sit autem dolores odio atque
-                                necessitatibus expedita nulla consequatur? Asperiores nemo numquam voluptas!</p>
+                        <div class="th-t2">
+                            <div class="th-testcomment">
+                                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis aspernatur magni
+                                    tenetur, dolorum exercitationem molestiae ex accusantium sit autem dolores odio atque
+                                    necessitatibus expedita nulla consequatur? Asperiores nemo numquam voluptas!</p>
+                            </div>
+                            <div class="th-testclient">
+                                <img src="media/blog1.jpg" width="80px" />
+                                <p><strong>SERAH YOLAND R.</strong><br>CEO Founder</p>
+                                <i class="fa-solid fa-quote-left"></i>
+                            </div>
                         </div>
-                        <div class="th-testclient">
-                            <img src="media/blog1.jpg" width="80px" />
-                            <p><strong>SERAH YOLAND R.</strong><br>CEO Founder</p>
-                            <i class="fa-solid fa-quote-left"></i>
-                        </div>
-                    </div>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -59,128 +77,91 @@
     <section class="customer-experience-section">
         <div class="header-content">
             <div class="left-header">
-                <p class="intro-text">In Their Own Words</p>
-                <h1 class="main-title">Unveiling the <span>True<br>Customer</span> Experience</h1>
+                <p class="intro-text"><%= testimonialsSection.intro || 'In Their Own Words' %></p>
+                <h1 class="main-title">
+                    <% if (testimonialsSection.title && testimonialsSection.highlight) { %>
+                        <%- testimonialsSection.title.replace(testimonialsSection.highlight, `<span>${testimonialsSection.highlight}</span>`) %>
+                    <% } else { %>
+                        Unveiling the <span>True<br>Customer</span> Experience
+                    <% } %>
+                </h1>
             </div>
             <div class="right-header">
-                <p class="description">Customers provide testimonials with<br>descriptions of satisfaction.</p>
+                <p class="description"><%= testimonialsSection.description || 'Customers provide testimonials with descriptions of satisfaction.' %></p>
+                <% if (testimonialsSection.cta_text && testimonialsSection.cta_link) { %>
+                    <a href="<%= testimonialsSection.cta_link %>" class="testimonial-cta-btn">
+                        <%= testimonialsSection.cta_text %>
+                    </a>
+                <% } %>
             </div>
         </div>
 
         <div class="testimonials-grid">
-            <div class="testimonial-card">
-        
-            
-                <div class="card-header">
-                    <img src="media/blog3.jpg" alt="Justin Oliver" class="profile-pic">
-                    <div class="profile-details">
-                        <p class="name">Justin Oliver</p>
-                        <p class="title">Office</p>
+            <% if (testimonials && testimonials.length > 0) { %>
+                <% testimonials.forEach(testimonial => { %>
+                    <div class="testimonial-card">
+                        <div class="card-header">
+                            <img src="<%= testimonial.image || 'media/blog3.jpg' %>" alt="<%= testimonial.name %>" class="profile-pic">
+                            <div class="profile-details">
+                                <p class="name"><%= testimonial.name %></p>
+                                <p class="title"><%= testimonial.title %></p>
+                            </div>
+                            <img src="media\Vector (1).png" alt="Quote Mark" class="quote-mark">
+                        </div>
+                        <div class="card-body">
+                            <p class="quote-text">
+                                <%= testimonial.content %>
+                            </p>
+                            <div class="star-rating">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <span class="star <%= i <= testimonial.rating ? 'filled' : '' %>">&#9733;</span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% if (testimonial.video) { %>
+                            <div class="card-video-container">
+                                <video class="card-video" muted loop>
+                                    <source src="<%= testimonial.video %>" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <img src="<%= testimonial.videoThumbnail || 'media/testboxing.jpg' %>" alt="Video Thumbnail" class="video-thumbnail">
+                            </div>
+                        <% } %>
                     </div>
-                    <img src="media\Vector (1).png" alt="Quote Mark"
-                        class="quote-mark">
-                </div>
-                <div class="card-body">
-                    <p class="quote-text">
-                        Lorem ipsum dolor sit amet consectetur. Purus sed id eget eu imperdiet amet. Feugiat pharetra in
-                        aliquam tincidunt facilisis faucibus erat justo. Nisl et ut sit ut semper ut lobortis nulla.
-                        Integer massa sit sit vitae commodo lorem vitae enim. Eros iaculis enim mauris leo risus.
-                        Gravida maecenas metus nulla egestas ac. Sed ullamcorper non congue ultricies ac bibendum id id.
-                    </p>
-                    <div class="star-rating">
-                        <span class="star">&#9733;</span><span class="star">&#9733;</span><span
-                            class="star">&#9733;</span><span class="star">&#9733;</span><span
-                            class="star">&#9733;</span>
+                <% }) %>
+            <% } else { %>
+                <!-- Default testimonials if none exist -->
+                <div class="testimonial-card">
+                    <div class="card-header">
+                        <img src="media/blog3.jpg" alt="Justin Oliver" class="profile-pic">
+                        <div class="profile-details">
+                            <p class="name">Justin Oliver</p>
+                            <p class="title">Office</p>
+                        </div>
+                        <img src="media\Vector (1).png" alt="Quote Mark" class="quote-mark">
                     </div>
-                </div>
-                <div class="card-video-container">
-                    <video class="card-video" muted loop>
-                        <source src="media\4438080-hd_1920_1080_25fps.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <img src="media\testboxing.jpg" alt="Video Thumbnail" class="video-thumbnail">
-                </div>
-            </div>
-
-            <div class="testimonial-card">
-                <div class="card-header">
-                    <img src="media/blog3.jpg" alt="Willy Sagita" class="profile-pic">
-                    <div class="profile-details">
-                        <p class="name">Willy Sagita</p>
-                        <p class="title">Office</p>
+                    <div class="card-body">
+                        <p class="quote-text">
+                            Lorem ipsum dolor sit amet consectetur. Purus sed id eget eu imperdiet amet. Feugiat pharetra in
+                            aliquam tincidunt facilisis faucibus erat justo. Nisl et ut sit ut semper ut lobortis nulla.
+                            Integer massa sit sit vitae commodo lorem vitae enim. Eros iaculis enim mauris leo risus.
+                            Gravida maecenas metus nulla egestas ac. Sed ullamcorper non congue ultricies ac bibendum id id.
+                        </p>
+                        <div class="star-rating">
+                            <span class="star">&#9733;</span><span class="star">&#9733;</span><span
+                                class="star">&#9733;</span><span class="star">&#9733;</span><span
+                                class="star">&#9733;</span>
+                        </div>
                     </div>
-                    <img src="media\Vector (1).png" alt="Quote Mark"
-                        class="quote-mark">
-                </div>
-                <div class="card-body">
-                    <p class="quote-text">
-                        Lorem ipsum dolor sit amet consectetur. Purus sed id eget eu imperdiet amet. Feugiat pharetra in
-                        aliquam tincidunt facilisis faucibus erat justo. Nisl et ut sit ut semper ut lobortis nulla.
-                        Integer massa sit sit vitae commodo lorem vitae enim. Eros iaculis enim mauris leo risus.
-                        Gravida maecenas metus nulla egestas ac. Sed ullamcorper non congue ultricies ac bibendum id id.
-                    </p>
-                    <div class="star-rating">
-                        <span class="star">&#9733;</span><span class="star">&#9733;</span><span
-                            class="star">&#9733;</span><span class="star">&#9733;</span><span
-                            class="star">&#9733;</span>
-                    </div>
-                </div>
-                <div class="card-video-container">
-                    <video class="card-video" muted loop>
-                        <source src="media\4438080-hd_1920_1080_25fps.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <img src="media\testboxing.jpg" alt="Video Thumbnail"
-                        class="video-thumbnail">
-                </div>
-            </div>
-
-            <div class="testimonial-card">
-                <div class="card-header">
-                    <img src="media/blog3.jpg" alt="Willy Sagita" class="profile-pic">
-                    <div class="profile-details">
-                        <p class="name">Willy Sagita</p>
-                        <p class="title">Office</p>
-                    </div>
-                    <img src="media\Vector (1).png" alt="Quote Mark"
-                        class="quote-mark">
-                </div>
-                <div class="card-body">
-                    <p class="quote-text">
-                        Lorem ipsum dolor sit amet consectetur. Purus sed id eget eu imperdiet amet. Feugiat pharetra in
-                        aliquam tincidunt facilisis faucibus erat justo. Nisl et ut sit ut semper ut lobortis nulla.
-                        Integer massa sit sit vitae commodo lorem vitae enim. Eros iaculis enim mauris leo risus.
-                        Gravida maecenas metus nulla egestas ac. Sed ullamcorper non congue ultricies ac bibendum id id.
-                    </p>
-                    <div class="star-rating">
-                        <span class="star">&#9733;</span><span class="star">&#9733;</span><span
-                            class="star">&#9733;</span><span class="star">&#9733;</span><span
-                            class="star">&#9733;</span>
+                    <div class="card-video-container">
+                        <video class="card-video" muted loop>
+                            <source src="media\4438080-hd_1920_1080_25fps.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <img src="media\testboxing.jpg" alt="Video Thumbnail" class="video-thumbnail">
                     </div>
                 </div>
-                <div class="card-video-container">
-                    <video class="card-video" muted loop>
-                        <source src="media\4438080-hd_1920_1080_25fps.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <img src="media\testboxing.jpg" alt="Video Thumbnail"
-                        class="video-thumbnail">
-                </div>
-            </div>
-
-            <div class="testimonial-card">
-                <div class="card-header">
-                    <img src="media/blog3.jpg" alt="Willy Sagita" class="profile-pic">
-                    <div class="profile-details">
-                        <p class="name">Willy Sagita</p>
-                        <p class="title">Office</p>
-                    </div>
-                    <img src="media\Vector (1).png" alt="Quote Mark"
-                        class="quote-mark">
-                </div>
-                <div class="card-body">
-                    <p class="quote-text">
-                        Lorem ipsum dolor sit amet consectetur. Purus sed id eget eu imperdiet amet. Feugiat pharetra in
+            <% } %>
                         aliquam tincidunt facilisis faucibus erat justo. Nisl et ut sit ut semper ut lobortis nulla.
                         Integer massa sit sit vitae commodo lorem vitae enim. Eros iaculis enim mauris leo risus.
                         Gravida maecenas metus nulla egestas ac. Sed ullamcorper non congue ultricies ac bibendum id id.

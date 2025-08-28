@@ -3087,6 +3087,36 @@ form {
 
 .star {
     margin-right: 2px;
+    color: #E5E7EB; /* Default gray color for empty stars */
+}
+
+.star.filled {
+    color: #D39D5D; /* Gold color for filled stars */
+}
+
+/* Testimonial CTA Button */
+.testimonial-cta-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #6366F1, #8B5CF6);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.testimonial-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+/* Hero subtitle styling */
+.hero-subtitle {
+    margin-top: 10px;
+    font-size: 1.1em;
+    opacity: 0.8;
 }
 
 .card-video-container {

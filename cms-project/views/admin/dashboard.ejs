@@ -6,6 +6,8 @@
     <title>Admin Dashboard - MCA CMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -22,72 +24,64 @@
             }
         }
     </script>
+    <style>
+        .dashboard-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .live-indicator {
+            position: relative;
+        }
+        .live-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -12px;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Content section container */
+        .content-section {
+            min-height: calc(100vh - 200px);
+        }
+        
+        .content-section .max-w-7xl {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Responsive grid improvements */
+        @media (max-width: 768px) {
+            .content-section .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .content-section .grid-cols-3 {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
     
     <!-- Include Sidebar -->
     <%- include('partials/sidebar') %>
-                            Contact Form
-                        </a>
-
-                        <a href="#benefits-section" onclick="showSection('benefits')" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-lg transition duration-200">
-                            <i class="fas fa-gift mr-3"></i>
-                            Benefits
-                        </a>
-
-                        <a href="#faq-section" onclick="showSection('faq')" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-lg transition duration-200">
-                            <i class="fas fa-question-circle mr-3"></i>
-                            FAQ
-                        </a>
-
-                        <a href="#newsletter-section" onclick="showSection('newsletter')" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-lg transition duration-200">
-                            <i class="fas fa-newspaper mr-3"></i>
-                            Newsletter
-                        </a>
-
-                    </div>
-                </div>
-
-                <!-- Pages Management -->
-                <div class="pt-4">
-                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pages</p>
-                    <div class="mt-2 space-y-1">
-                        
-                        <a href="/admin/pages" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-lg transition duration-200">
-                            <i class="fas fa-file-alt mr-3"></i>
-                            Manage Pages
-                        </a>
-
-                        <a href="/admin/pages/new" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-lg transition duration-200">
-                            <i class="fas fa-plus mr-3"></i>
-                            Create New Page
-                        </a>
-
-                    </div>
-                </div>
-
-                <!-- Other -->
-                <div class="pt-4">
-                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Other</p>
-                    <div class="mt-2 space-y-1">
-                        
-                        <a href="/" target="_blank" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-lg transition duration-200">
-                            <i class="fas fa-external-link-alt mr-3"></i>
-                            View Site
-                        </a>
-
-                        <a href="/admin/logout" class="flex items-center px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition duration-200">
-                            <i class="fas fa-sign-out-alt mr-3"></i>
-                            Logout
-                        </a>
-
-                    </div>
-                </div>
-
-            </div>
-        </nav>
-
-    </div>
+                       
 
     <!-- Mobile Sidebar Overlay -->
     <div class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden hidden" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -150,7 +144,7 @@
         </header>
 
         <!-- Page Content -->
-        <main class="p-4 sm:p-6 lg:p-8">
+        <main class="p-4 sm:p-6 lg:p-8 pt-0">
             
             <!-- Success/Error Messages -->
             <% if (typeof success !== 'undefined' && success) { %>
@@ -169,109 +163,311 @@
 
             <!-- Dashboard Overview -->
             <div id="overview-section" class="content-section">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, Admin!</h2>
-                    <p class="text-gray-600">Manage your website content from this dashboard.</p>
+                <div class="mb-6 mt-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, Admin!</h2>
+                            <p class="text-gray-600">Manage your website content from this dashboard.</p>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-green-600 live-indicator">
+                            <span>Live Data</span>
+                            <i class="fas fa-circle text-xs pulse-dot"></i>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Real-time Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     
-                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                        <div class="flex items-center">
+                    <!-- Blog Posts Card -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 dashboard-card">
+                        <div class="flex items-center justify-between">
                             <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-concierge-bell text-blue-600"></i>
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-blog text-blue-600 text-xl"></i>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Services</p>
-                                <p class="text-2xl font-semibold text-gray-900">5</p>
+                            <div class="flex items-center space-x-1 text-green-500">
+                                <i class="fas fa-arrow-up text-sm"></i>
+                                <span class="text-sm font-medium">+12%</span>
                             </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm font-medium text-gray-600">Blog Posts</p>
+                            <p class="text-3xl font-bold text-gray-900" id="blogCount"><%= stats.blogPosts || 0 %></p>
+                            <p class="text-sm text-gray-500 mt-1">Total published posts</p>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                        <div class="flex items-center">
+                    <!-- Testimonials Card -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 dashboard-card">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-star text-yellow-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1 text-green-500">
+                                <i class="fas fa-arrow-up text-sm"></i>
+                                <span class="text-sm font-medium">+8%</span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm font-medium text-gray-600">Testimonials</p>
+                            <p class="text-3xl font-bold text-gray-900" id="testimonialCount"><%= stats.testimonials || 0 %></p>
+                            <p class="text-sm text-gray-500 mt-1">Customer reviews</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Submissions Card -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 dashboard-card">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-envelope text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1 text-red-500">
+                                <span class="w-2 h-2 bg-red-500 rounded-full pulse-dot"></span>
+                                <span class="text-sm font-medium" id="newContactCount"><%= stats.newContacts || 0 %></span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm font-medium text-gray-600">Contact Forms</p>
+                            <p class="text-3xl font-bold text-gray-900" id="contactCount"><%= stats.contacts || 0 %></p>
+                            <p class="text-sm text-gray-500 mt-1">Total submissions</p>
+                        </div>
+                    </div>
+
+                    <!-- Content Items Card -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 dashboard-card">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1 text-blue-500">
+                                <i class="fas fa-sync-alt text-sm"></i>
+                                <span class="text-sm font-medium">Updated</span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm font-medium text-gray-600">Content Items</p>
+                            <p class="text-3xl font-bold text-gray-900" id="contentCount"><%= stats.contentItems || 0 %></p>
+                            <p class="text-sm text-gray-500 mt-1">Pages & sections</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Charts and Analytics Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    
+                    <!-- Activity Chart -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Content Activity</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-500">Last 7 days</span>
+                                <div class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></div>
+                            </div>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Content Distribution -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Content Distribution</h3>
+                            <button onclick="refreshCharts()" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Recent Activity and Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    
+                    <!-- Recent Blog Posts -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Recent Blog Posts</h3>
+                            <a href="/admin/blog" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                View All <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                        <div id="recentPosts" class="space-y-4">
+                            <% if (recentPosts && recentPosts.length > 0) { %>
+                                <% recentPosts.forEach(post => { %>
+                                    <div class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition duration-200">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-blog text-blue-600"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate">
+                                                <%= post.title %>
+                                            </p>
+                                            <p class="text-sm text-gray-500">
+                                                <%= post.category || 'General' %> • 
+                                                <%= new Date(post.createdAt).toLocaleDateString() %>
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= post.published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                                                <%= post.published ? 'Published' : 'Draft' %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="text-center py-6">
+                                    <i class="fas fa-blog text-gray-400 text-3xl mb-3"></i>
+                                    <p class="text-gray-500">No blog posts yet</p>
+                                    <a href="/admin/blog/new" class="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">
+                                        Create your first post
+                                    </a>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Recent Contact Submissions -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Recent Contacts</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800" id="newContactBadge">
+                                    <%= stats.newContacts || 0 %> New
+                                </span>
+                            </div>
+                        </div>
+                        <div id="recentContacts" class="space-y-4">
+                            <% if (recentContacts && recentContacts.length > 0) { %>
+                                <% recentContacts.forEach(contact => { %>
+                                    <div class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition duration-200">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-user text-green-600"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate">
+                                                <%= contact.name %>
+                                            </p>
+                                            <p class="text-sm text-gray-500 truncate">
+                                                <%= contact.email %>
+                                            </p>
+                                            <p class="text-xs text-gray-400">
+                                                <%= new Date(contact.createdAt).toLocaleDateString() %>
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= contact.status === 'new' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800' %>">
+                                                <%= contact.status || 'new' %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="text-center py-6">
+                                    <i class="fas fa-envelope text-gray-400 text-3xl mb-3"></i>
+                                    <p class="text-gray-500">No contact submissions yet</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- System Status -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-6">System Status</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        
+                        <div class="flex items-center space-x-3">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-users text-green-600"></i>
+                                    <i class="fas fa-database text-green-600"></i>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Team Members</p>
-                                <p class="text-2xl font-semibold text-gray-900">2</p>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Database</p>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm text-green-600">Connected</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                        <div class="flex items-center">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-server text-blue-600"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Server</p>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></div>
+                                    <span class="text-sm text-green-600">Online</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-star text-yellow-600"></i>
+                                    <i class="fas fa-clock text-yellow-600"></i>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Testimonials</p>
-                                <p class="text-2xl font-semibold text-gray-900">6</p>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Last Update</p>
+                                <p class="text-sm text-gray-600" id="lastUpdate">
+                                    <%= new Date().toLocaleString() %>
+                                </p>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-question-circle text-purple-600"></i>
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">FAQs</p>
-                                <p class="text-2xl font-semibold text-gray-900">5</p>
-                            </div>
-                        </div>
                     </div>
-
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <!-- <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         
-                        <button onclick="showSection('services')" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
-                            <i class="fas fa-concierge-bell text-indigo-600 mr-3"></i>
-                            <span class="text-gray-700">Manage Services</span>
-                        </button>
+                        <a href="/admin/blog/new" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition duration-200 group">
+                            <i class="fas fa-plus text-blue-600 mr-3 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-gray-700 font-medium">New Blog Post</span>
+                        </a>
 
-                        <button onclick="showSection('team')" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
-                            <i class="fas fa-users text-indigo-600 mr-3"></i>
-                            <span class="text-gray-700">Edit Team</span>
-                        </button>
+                        <a href="/admin/testimonials/new" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 hover:border-yellow-300 transition duration-200 group">
+                            <i class="fas fa-star text-yellow-600 mr-3 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-gray-700 font-medium">Add Testimonial</span>
+                        </a>
 
-                        <button onclick="showSection('testimonials')" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
-                            <i class="fas fa-star text-indigo-600 mr-3"></i>
-                            <span class="text-gray-700">Add Testimonial</span>
-                        </button>
+                        <a href="/admin/pages/new" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-300 transition duration-200 group">
+                            <i class="fas fa-file-alt text-purple-600 mr-3 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-gray-700 font-medium">Create Page</span>
+                        </a>
 
-                        <button onclick="showSection('faq')" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
-                            <i class="fas fa-question-circle text-indigo-600 mr-3"></i>
-                            <span class="text-gray-700">Update FAQ</span>
-                        </button>
-
-                        <button onclick="showSection('video')" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
-                            <i class="fas fa-video text-indigo-600 mr-3"></i>
-                            <span class="text-gray-700">Change Video</span>
-                        </button>
-
-                        <a href="/" target="_blank" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
-                            <i class="fas fa-external-link-alt text-indigo-600 mr-3"></i>
-                            <span class="text-gray-700">Preview Site</span>
+                        <a href="/" target="_blank" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300 transition duration-200 group">
+                            <i class="fas fa-external-link-alt text-green-600 mr-3 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-gray-700 font-medium">Preview Site</span>
                         </a>
 
                     </div>
-                </div>
+                </div> -->
 
             </div>
 
@@ -284,6 +480,207 @@
 
     <!-- JavaScript -->
     <script>
+        // Dashboard data and charts
+        let activityChart = null;
+        let distributionChart = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            startLiveUpdates();
+            updateLastUpdateTime();
+        });
+
+        // Initialize charts
+        function initializeCharts() {
+            // Activity Chart (Line Chart)
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            const activityData = {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Blog Posts',
+                    data: [2, 1, 4, 2, 3, 1, 2],
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Testimonials',
+                    data: [1, 2, 1, 3, 1, 2, 1],
+                    borderColor: '#F59E0B',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+
+            activityChart = new Chart(activityCtx, {
+                type: 'line',
+                data: activityData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Distribution Chart (Doughnut Chart)
+            const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+            const distributionData = {
+                labels: ['Blog Posts', 'Testimonials', 'Pages', 'Content Items'],
+                datasets: [{
+                    data: [
+                        parseInt('<%= stats.blogPosts || 0 %>'),
+                        parseInt('<%= stats.testimonials || 0 %>'),
+                        5, // Pages count
+                        parseInt('<%= stats.contentItems || 0 %>')
+                    ],
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#F59E0B',
+                        '#10B981',
+                        '#8B5CF6'
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            };
+
+            distributionChart = new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: distributionData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Live data updates
+        function startLiveUpdates() {
+            // Update stats every 30 seconds
+            setInterval(updateDashboardStats, 30000);
+            
+            // Update time every minute
+            setInterval(updateLastUpdateTime, 60000);
+        }
+
+        // Update dashboard statistics
+        async function updateDashboardStats() {
+            try {
+                const response = await fetch('/admin/api/stats');
+                if (response.ok) {
+                    const stats = await response.json();
+                    
+                    // Update stat cards with animation
+                    updateStatCard('blogCount', stats.blogPosts || 0);
+                    updateStatCard('testimonialCount', stats.testimonials || 0);
+                    updateStatCard('contactCount', stats.contacts || 0);
+                    updateStatCard('contentCount', stats.contentItems || 0);
+                    updateStatCard('newContactCount', stats.newContacts || 0);
+                    
+                    // Update badge
+                    const badge = document.getElementById('newContactBadge');
+                    if (badge) {
+                        badge.textContent = `${stats.newContacts || 0} New`;
+                        if (stats.newContacts > 0) {
+                            badge.classList.add('animate-pulse');
+                        } else {
+                            badge.classList.remove('animate-pulse');
+                        }
+                    }
+
+                    // Update charts if data changed
+                    if (distributionChart) {
+                        distributionChart.data.datasets[0].data = [
+                            stats.blogPosts || 0,
+                            stats.testimonials || 0,
+                            5, // Pages count
+                            stats.contentItems || 0
+                        ];
+                        distributionChart.update('none');
+                    }
+                }
+            } catch (error) {
+                console.log('Stats update error:', error);
+            }
+        }
+
+        // Update individual stat card with animation
+        function updateStatCard(elementId, newValue) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const currentValue = parseInt(element.textContent);
+                if (currentValue !== newValue) {
+                    element.style.transform = 'scale(1.1)';
+                    element.style.transition = 'transform 0.2s';
+                    setTimeout(() => {
+                        element.textContent = newValue;
+                        element.style.transform = 'scale(1)';
+                    }, 100);
+                }
+            }
+        }
+
+        // Update last update time
+        function updateLastUpdateTime() {
+            const element = document.getElementById('lastUpdate');
+            if (element) {
+                element.textContent = new Date().toLocaleString();
+            }
+        }
+
+        // Refresh charts manually
+        function refreshCharts() {
+            if (activityChart) {
+                // Simulate new data
+                const newData = activityChart.data.datasets[0].data.map(() => 
+                    Math.floor(Math.random() * 5) + 1
+                );
+                activityChart.data.datasets[0].data = newData;
+                
+                const newTestimonialData = activityChart.data.datasets[1].data.map(() => 
+                    Math.floor(Math.random() * 3) + 1
+                );
+                activityChart.data.datasets[1].data = newTestimonialData;
+                
+                activityChart.update('active');
+            }
+            
+            updateDashboardStats();
+        }
+
         // Sidebar functionality
         function openSidebar() {
             document.getElementById('sidebar').classList.remove('-translate-x-full');
@@ -353,6 +750,31 @@
                 }, 300);
             });
         }, 5000);
+
+        // Add click animations to dashboard cards
+        document.querySelectorAll('.dashboard-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Ctrl/Cmd + R to refresh charts
+            if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+                event.preventDefault();
+                refreshCharts();
+            }
+            
+            // Ctrl/Cmd + N to create new blog post
+            if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
+                event.preventDefault();
+                window.location.href = '/admin/blog/new';
+            }
+        });
     </script>
 
 </body>
