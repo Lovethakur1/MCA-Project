@@ -5,7 +5,7 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const User = require('../models/User');
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://cms_user:cms_password@localhost:27017/mca-cms', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mca-cms', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
