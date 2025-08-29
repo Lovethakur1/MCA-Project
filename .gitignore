@@ -1,38 +1,51 @@
+
 # Node.js dependencies
-node_modules/
+cms-project/node_modules/
 
 # Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+cms-project/logs/
+cms-project/*.log
+cms-project/npm-debug.log*
+cms-project/yarn-debug.log*
+cms-project/yarn-error.log*
 
 # OS generated files
 .DS_Store
 Thumbs.db
 
 # Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+cms-project/.env
+cms-project/.env.local
+cms-project/.env.development.local
+cms-project/.env.test.local
+cms-project/.env.production.local
 
 # Build output
-/dist/
-/build/
+cms-project/dist/
+cms-project/build/
 
 # IDE files
-.vscode/
-.idea/
+cms-project/.vscode/
+cms-project/.idea/
 
 # Misc
-*.bak
-*.tmp
+cms-project/*.bak
+cms-project/*.tmp
 
 # Ignore media files (optional, uncomment if needed)
 # media/
+# cms-project/public/media/
 
 # Ignore public uploads (optional, uncomment if needed)
-# public/uploads/
+# cms-project/public/uploads/
+
+# Ignore database files (if any)
+cms-project/*.sqlite
+cms-project/*.db
+
+# Ignore generated files
+cms-project/public/js/
+cms-project/public/css/
+
+# Ignore system files
+cms-project/setup.bat
