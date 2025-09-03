@@ -818,20 +818,32 @@ exports.updateHomeContent = async (req, res) => {
 // Individual section update methods
 exports.updateVideoSection = async (req, res) => {
   try {
+    console.log('=== VIDEO UPLOAD REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('Uploaded file:', req.file);
+    
     const { hero } = req.body;
+    let uploadedFileName = null;
     
     // Handle file upload for video if present
-    if (req.files && req.files.length > 0) {
-      const videoFile = req.files.find(file => file.fieldname === 'video');
-      if (videoFile) {
-        // Update hero backgroundVideo in database with new filename
-        await Content.findOneAndUpdate(
-          { page: 'home', section: 'hero', key: 'backgroundVideo' },
-          { value: videoFile.filename, type: 'text' },
-          { upsert: true, new: true }
-        );
-        // console.log('Video uploaded:', videoFile.filename);
-      }
+    if (req.file) {
+      console.log('Processing video upload:', {
+        originalName: req.file.originalname,
+        filename: req.file.filename,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+      
+      uploadedFileName = req.file.filename;
+      
+      // Update hero backgroundVideo in database with new filename
+      await Content.findOneAndUpdate(
+        { page: 'home', section: 'hero', key: 'backgroundVideo' },
+        { value: uploadedFileName, type: 'video' },
+        { upsert: true, new: true }
+      );
+      
+      console.log('Video file saved to database:', uploadedFileName);
     }
     
     // Update other hero fields if provided
@@ -847,77 +859,82 @@ exports.updateVideoSection = async (req, res) => {
       }
     }
     
-    // console.log('Video section updated successfully');
-    res.redirect('/admin/dashboard?success=Video section updated successfully');
+    const successMessage = uploadedFileName 
+      ? `Video section updated successfully. Uploaded: ${uploadedFileName}` 
+      : 'Video section updated successfully';
+      
+    console.log('Video section update completed');
+    res.redirect(`/admin/dashboard?success=${encodeURIComponent(successMessage)}#video-section`);
   } catch (error) {
     console.error('Video section update error:', error);
-    res.redirect('/admin/dashboard?error=Failed to update video section');
+    res.redirect('/admin/dashboard?error=Failed to update video section#video-section');
   }
 };
 
 exports.updateServicesSection = async (req, res) => {
   try {
-    // console.log('=== Services Update Request ===');
-    // console.log('Request body:', req.body);
-    // console.log('Request files:', req.files);
-    // console.log('Files count:', req.files ? req.files.length : 0);
+    console.log('=== SERVICES UPDATE REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
     
     const { services } = req.body;
+    let uploadedFiles = [];
     
     // Handle icon file uploads first
-    if (req.files && req.files.length > 0) {
-      // console.log('Processing file uploads...');
-      for (const file of req.files) {
-        // console.log('File details:'
-        //   ,
-        //    {
-        //   fieldname: file.fieldname,
-        //   filename: file.filename,
-        //   originalname: file.originalname,
-        //   size: file.size,
-        //   mimetype: file.mimetype
-        // });
-        
-        if (file.fieldname.includes('_icon')) {
-          // Extract the exact key (e.g., "service1_icon")
-          const iconKey = file.fieldname;
+    if (req.files && Object.keys(req.files).length > 0) {
+      console.log('Processing file uploads...');
+      
+      for (const [fieldname, fileArray] of Object.entries(req.files)) {
+        if (fileArray && fileArray.length > 0) {
+          const file = fileArray[0]; // Get first file since we use single uploads
           
-          // console.log(`Processing icon upload for ${iconKey}:`, file.filename);
+          console.log('Processing file upload:', {
+            fieldname: fieldname,
+            originalName: file.originalname,
+            filename: file.filename,
+            mimetype: file.mimetype,
+            size: file.size
+          });
           
-          // Save to database
-          const result = await Content.findOneAndUpdate(
-            { page: 'home', section: 'services', key: iconKey },
-            { value: file.filename, type: 'text' },
-            { upsert: true, new: true }
-          );
-          
-          // console.log(`Icon saved to database for ${iconKey}:`, result);
+          if (fieldname.includes('_icon')) {
+            // Save to database with image type
+            await Content.findOneAndUpdate(
+              { page: 'home', section: 'services', key: fieldname },
+              { value: file.filename, type: 'image' },
+              { upsert: true, new: true }
+            );
+            
+            uploadedFiles.push(`${fieldname}: ${file.originalname}`);
+            console.log(`Icon saved to database for ${fieldname}:`, file.filename);
+          }
         }
       }
-    } else {
-      // console.log('No files received in request');
     }
     
-    // Handle other services data
+    // Handle other services text data
     if (services) {
-      console.log('Processing services data...');
+      console.log('Processing services text data...');
       for (const [key, value] of Object.entries(services)) {
-        if (value && value.trim() !== '' && !key.includes('_icon')) { // Skip icon fields as they're handled above
-          const result = await Content.findOneAndUpdate(
+        if (value && value.trim() !== '' && !key.includes('_icon')) {
+          await Content.findOneAndUpdate(
             { page: 'home', section: 'services', key },
-            { value, type: 'text' },
+            { value: value.trim(), type: 'text' },
             { upsert: true, new: true }
           );
-          console.log(`Updated ${key}:`, value, 'Result:', result);
+          console.log(`Updated ${key}:`, value.trim());
         }
       }
     }
     
-    console.log('Services section updated successfully');
-    res.redirect('/admin/dashboard?success=Services section updated successfully');
+    const successMessage = uploadedFiles.length > 0 
+      ? `Services section updated successfully. Uploaded: ${uploadedFiles.join(', ')}` 
+      : 'Services section updated successfully';
+      
+    console.log('Services section update completed');
+    res.redirect(`/admin/dashboard?success=${encodeURIComponent(successMessage)}#services-section`);
   } catch (error) {
     console.error('Services section update error:', error);
-    res.redirect('/admin/dashboard?error=Failed to update services section');
+    res.redirect('/admin/dashboard?error=Failed to update services section#services-section');
   }
 };
 
@@ -925,60 +942,59 @@ exports.updateServicesSection = async (req, res) => {
 
 exports.updateSingleService = async (req, res) => {
   try {
-    console.log('=== Single Service Update Request ===');
+    console.log('=== SINGLE SERVICE UPDATE REQUEST ===');
     console.log('Request body:', req.body);
-    console.log('Request files:', req.files);
-    console.log('Service index:', req.body.serviceIndex);
+    console.log('Request file:', req.file);
     
     const { services, serviceIndex } = req.body;
+    let uploadedFileName = null;
     
-    // Handle icon file upload for this specific service
-    if (req.files && req.files.length > 0) {
-      console.log('Processing icon upload for service', serviceIndex);
-      const iconFile = req.files.find(file => file.fieldname === `service${serviceIndex}_icon`);
+    // Handle icon file upload
+    if (req.file) {
+      console.log('Processing single service icon upload:', {
+        originalName: req.file.originalname,
+        filename: req.file.filename,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
       
-      if (iconFile) {
-        console.log('Icon file found:', {
-          fieldname: iconFile.fieldname,
-          filename: iconFile.filename,
-          originalname: iconFile.originalname,
-          size: iconFile.size
-        });
-        
-        // Save icon filename to database
-        const iconKey = `service${serviceIndex}_icon`;
-        const result = await Content.findOneAndUpdate(
-          { page: 'home', section: 'services', key: iconKey },
-          { value: iconFile.filename, type: 'text' },
-          { upsert: true, new: true }
-        );
-        console.log(`Updated ${iconKey}:`, iconFile.filename, 'Database result:', result);
-      } else {
-        console.log('No icon file found for service', serviceIndex);
-      }
+      uploadedFileName = req.file.filename;
+      const iconKey = `service${serviceIndex}_icon`;
+      
+      // Save icon filename to database
+      await Content.findOneAndUpdate(
+        { page: 'home', section: 'services', key: iconKey },
+        { value: uploadedFileName, type: 'image' },
+        { upsert: true, new: true }
+      );
+      
+      console.log(`Icon saved to database for ${iconKey}:`, uploadedFileName);
     }
     
-    // Update other service fields
+    // Update other service text fields
     if (services) {
       console.log('Processing text fields for service', serviceIndex);
       for (const [key, value] of Object.entries(services)) {
         if (value && value.trim() !== '' && key.includes(`service${serviceIndex}_`)) {
-          console.log(`Updating field: ${key} = ${value}`);
-          const result = await Content.findOneAndUpdate(
+          await Content.findOneAndUpdate(
             { page: 'home', section: 'services', key },
-            { value, type: 'text' },
+            { value: value.trim(), type: 'text' },
             { upsert: true, new: true }
           );
-          console.log(`Database update result for ${key}:`, result);
+          console.log(`Updated field: ${key} = ${value.trim()}`);
         }
       }
     }
     
-    console.log(`Service ${serviceIndex} updated successfully`);
-    res.redirect('/admin/dashboard?success=Service updated successfully');
+    const successMessage = uploadedFileName 
+      ? `Service ${serviceIndex} updated successfully. Uploaded: ${req.file.originalname}` 
+      : `Service ${serviceIndex} updated successfully`;
+      
+    console.log(`Service ${serviceIndex} update completed`);
+    res.redirect(`/admin/dashboard?success=${encodeURIComponent(successMessage)}#services-section`);
   } catch (error) {
     console.error('Single service update error:', error);
-    res.redirect('/admin/dashboard?error=Failed to update service');
+    res.redirect('/admin/dashboard?error=Failed to update service#services-section');
   }
 };
 
@@ -987,32 +1003,83 @@ exports.updateSingleService = async (req, res) => {
 
 exports.updateTeamSection = async (req, res) => {
   try {
+    console.log('=== TEAM SECTION UPDATE REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
+    
     const { about, team } = req.body;
+    let uploadedFiles = [];
     
+    // Handle photo file uploads first
+    if (req.files && Object.keys(req.files).length > 0) {
+      console.log('Processing team photo uploads...');
+      
+      for (const [fieldname, fileArray] of Object.entries(req.files)) {
+        if (fileArray && fileArray.length > 0) {
+          const file = fileArray[0]; // Get first file since we use single uploads
+          
+          console.log('Processing team photo upload:', {
+            fieldname: fieldname,
+            originalName: file.originalname,
+            filename: file.filename,
+            mimetype: file.mimetype,
+            size: file.size
+          });
+          
+          if (fieldname.includes('_photo')) {
+            // Save to database with image type
+            await Content.findOneAndUpdate(
+              { page: 'home', section: 'team', key: fieldname },
+              { value: file.filename, type: 'image' },
+              { upsert: true, new: true }
+            );
+            
+            uploadedFiles.push(`${fieldname}: ${file.originalname}`);
+            console.log(`Photo saved to database for ${fieldname}:`, file.filename);
+          }
+        }
+      }
+    }
+    
+    // Handle about section text data
     if (about) {
+      console.log('Processing about section data...');
       for (const [key, value] of Object.entries(about)) {
-        await Content.findOneAndUpdate(
-          { page: 'home', section: 'about', key },
-          { value, type: 'text' },
-          { upsert: true, new: true }
-        );
+        if (value && value.trim() !== '') {
+          await Content.findOneAndUpdate(
+            { page: 'home', section: 'about', key },
+            { value: value.trim(), type: 'text' },
+            { upsert: true, new: true }
+          );
+          console.log(`Updated about.${key}:`, value.trim());
+        }
       }
     }
     
+    // Handle team section text data
     if (team) {
+      console.log('Processing team section data...');
       for (const [key, value] of Object.entries(team)) {
-        await Content.findOneAndUpdate(
-          { page: 'home', section: 'team', key },
-          { value, type: 'text' },
-          { upsert: true, new: true }
-        );
+        if (value && value.trim() !== '' && !key.includes('_photo')) {
+          await Content.findOneAndUpdate(
+            { page: 'home', section: 'team', key },
+            { value: value.trim(), type: 'text' },
+            { upsert: true, new: true }
+          );
+          console.log(`Updated team.${key}:`, value.trim());
+        }
       }
     }
     
-    res.redirect('/admin/dashboard?success=Team section updated');
+    const successMessage = uploadedFiles.length > 0 
+      ? `Team section updated successfully. Uploaded: ${uploadedFiles.join(', ')}` 
+      : 'Team section updated successfully';
+      
+    console.log('Team section update completed');
+    res.redirect(`/admin/dashboard?success=${encodeURIComponent(successMessage)}#team-section`);
   } catch (error) {
     console.error('Team section update error:', error);
-    res.redirect('/admin/dashboard?error=Failed to update team section');
+    res.redirect('/admin/dashboard?error=Failed to update team section#team-section');
   }
 };
 
@@ -1224,48 +1291,68 @@ exports.deleteTeamMember = async (req, res) => {
 
 exports.updateConceptSection = async (req, res) => {
   try {
+    console.log('=== CONCEPT SECTION UPDATE REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
+    
     const { concept } = req.body;
+    let uploadedFiles = [];
     
-    // Handle uploaded files
-    const uploadedFiles = {};
-    if (req.files && req.files.length > 0) {
-      req.files.forEach(file => {
-        const fieldName = file.fieldname;
-        uploadedFiles[fieldName] = file.filename;
-      });
-    }
-    
-    if (concept) {
-      for (const [key, value] of Object.entries(concept)) {
-        // Check if there's an uploaded file for this field
-        let finalValue = value;
-        if (uploadedFiles[key]) {
-          finalValue = uploadedFiles[key];
+    // Handle icon file uploads first
+    if (req.files && Object.keys(req.files).length > 0) {
+      console.log('Processing concept icon uploads...');
+      
+      for (const [fieldname, fileArray] of Object.entries(req.files)) {
+        if (fileArray && fileArray.length > 0) {
+          const file = fileArray[0]; // Get first file since we use single uploads
+          
+          console.log('Processing concept icon upload:', {
+            fieldname: fieldname,
+            originalName: file.originalname,
+            filename: file.filename,
+            mimetype: file.mimetype,
+            size: file.size
+          });
+          
+          if (fieldname.includes('_icon')) {
+            // Save to database with image type
+            await Content.findOneAndUpdate(
+              { page: 'home', section: 'concept', key: fieldname },
+              { value: file.filename, type: 'image' },
+              { upsert: true, new: true }
+            );
+            
+            uploadedFiles.push(`${fieldname}: ${file.originalname}`);
+            console.log(`Icon saved to database for ${fieldname}:`, file.filename);
+          }
         }
-        
-        await Content.findOneAndUpdate(
-          { page: 'home', section: 'concept', key },
-          { value: finalValue, type: key.includes('icon') ? 'image' : 'text' },
-          { upsert: true, new: true }
-        );
       }
     }
     
-    // Handle uploaded icons separately if they don't have corresponding concept fields
-    for (const [fieldName, filename] of Object.entries(uploadedFiles)) {
-      if (fieldName.includes('icon')) {
-        await Content.findOneAndUpdate(
-          { page: 'home', section: 'concept', key: fieldName },
-          { value: filename, type: 'image' },
-          { upsert: true, new: true }
-        );
+    // Handle concept text data
+    if (concept) {
+      console.log('Processing concept text data...');
+      for (const [key, value] of Object.entries(concept)) {
+        if (value && value.trim() !== '' && !key.includes('_icon')) {
+          await Content.findOneAndUpdate(
+            { page: 'home', section: 'concept', key },
+            { value: value.trim(), type: 'text' },
+            { upsert: true, new: true }
+          );
+          console.log(`Updated concept.${key}:`, value.trim());
+        }
       }
     }
     
-    res.redirect('/admin/dashboard?success=Concept section updated');
+    const successMessage = uploadedFiles.length > 0 
+      ? `Concept section updated successfully. Uploaded: ${uploadedFiles.join(', ')}` 
+      : 'Concept section updated successfully';
+      
+    console.log('Concept section update completed');
+    res.redirect(`/admin/dashboard?success=${encodeURIComponent(successMessage)}#concept-section`);
   } catch (error) {
     console.error('Concept section update error:', error);
-    res.redirect('/admin/dashboard?error=Failed to update concept section');
+    res.redirect('/admin/dashboard?error=Failed to update concept section#concept-section');
   }
 };
 

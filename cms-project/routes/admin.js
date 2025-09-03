@@ -7,11 +7,36 @@ const coachController = require('../controllers/coachController');
 const blogPageController = require('../controllers/blogPageController');
 const authMiddleware = require('../middleware/auth');
 const multer = require('multer');
+const path = require('path');
 
-// Simple upload middleware for other routes
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/media/'); // Store files in public/media directory
+  },
+  filename: function (req, file, cb) {
+    // Keep original name with timestamp to avoid conflicts
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    const name = path.basename(file.originalname, ext);
+    cb(null, name + '-' + uniqueSuffix + ext);
+  }
+});
+
+// Upload middleware with file filtering
 const upload = multer({
-  dest: './public/media/',
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB
+  storage: storage,
+  limits: { 
+    fileSize: 50 * 1024 * 1024 // 50MB
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept video and image files
+    if (file.mimetype.startsWith('video/') || file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only video and image files are allowed!'), false);
+    }
+  }
 });
 
 // Admin login
@@ -74,13 +99,32 @@ router.get('/blog', (req, res) => {
 });
 
 // Content management
-router.post('/video/update', adminController.updateVideoSection);
-router.post('/services/update', adminController.updateServicesSection);
-router.post('/services/update-single', adminController.updateSingleService);
-router.post('/team/update', adminController.updateTeamSection);
-router.post('/team/update-single', adminController.updateSingleTeamMember);
+router.post('/video/update', upload.single('video'), adminController.updateVideoSection);
+router.post('/services/update', upload.fields([
+  { name: 'service1_icon', maxCount: 1 },
+  { name: 'service2_icon', maxCount: 1 },
+  { name: 'service3_icon', maxCount: 1 },
+  { name: 'service4_icon', maxCount: 1 },
+  { name: 'service5_icon', maxCount: 1 },
+  { name: 'service6_icon', maxCount: 1 }
+]), adminController.updateServicesSection);
+router.post('/services/update-single', upload.single('icon'), adminController.updateSingleService);
+router.post('/team/update', upload.fields([
+  { name: 'member1_photo', maxCount: 1 },
+  { name: 'member2_photo', maxCount: 1 },
+  { name: 'member3_photo', maxCount: 1 },
+  { name: 'member4_photo', maxCount: 1 },
+  { name: 'member5_photo', maxCount: 1 },
+  { name: 'member6_photo', maxCount: 1 }
+]), adminController.updateTeamSection);
+router.post('/team/update-single', upload.single('photo'), adminController.updateSingleTeamMember);
 router.delete('/team/delete-member/:memberIndex', adminController.deleteTeamMember);
-router.post('/concept/update', adminController.updateConceptSection);
+router.post('/concept/update', upload.fields([
+  { name: 'feature1_icon', maxCount: 1 },
+  { name: 'feature2_icon', maxCount: 1 },
+  { name: 'feature3_icon', maxCount: 1 },
+  { name: 'feature4_icon', maxCount: 1 }
+]), adminController.updateConceptSection);
 router.post('/testimonials/update', adminController.updateTestimonialsSection);
 router.post('/contact/update', adminController.updateContactSection);
 router.post('/benefits/update', adminController.updateBenefitsSection);

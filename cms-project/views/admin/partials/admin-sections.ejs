@@ -35,8 +35,24 @@
                         </button>
                         <p class="text-xs text-gray-500 mt-2">MP4, WebM up to 50MB</p>
                     </div>
+                    
+                    <!-- File Selected Display -->
+                    <div id="fileSelected" class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hidden">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-file-video text-blue-600 mr-2"></i>
+                                <span class="text-sm text-blue-700 font-medium" id="fileName"></span>
+                            </div>
+                            <button type="button" onclick="clearSelectedFile()" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-blue-600 mt-1">Ready to upload</p>
+                    </div>
+                    
                     <div id="videoPreview" class="mt-4 hidden">
                         <video class="w-full h-48 object-cover rounded-lg" controls></video>
+                        <p class="text-xs text-gray-500 mt-1">Preview</p>
                     </div>
                 </div>
 
@@ -177,6 +193,20 @@
                                     Choose Icon
                                 </button>
                                 <p class="text-xs text-gray-500 mt-1">PNG, JPG, SVG up to 5MB</p>
+                            </div>
+                            
+                            <!-- File Selected Display -->
+                            <div id="fileSelected<%= i %>" class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hidden">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-image text-blue-600 mr-2"></i>
+                                        <span class="text-sm text-blue-700 font-medium" id="fileName<%= i %>"></span>
+                                    </div>
+                                    <button type="button" onclick="clearServiceIcon('<%= i %>')" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-blue-600 mt-1">Ready to upload</p>
                             </div>
 
                             <!-- Icon Preview -->
@@ -483,15 +513,34 @@
                             <% } %>
                             
                             <!-- Icon Upload -->
-                            <div class="flex space-x-2">
-                                <input type="file" name="feature1_icon" accept="image/*" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" onchange="previewIcon(this, 'feature1_preview')">
-                                <button type="button" onclick="clearIconUpload('feature1_icon', 'feature1_preview')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Clear</button>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-indigo-400 transition duration-200">
+                                <i class="fas fa-upload text-xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-600 mb-2">Upload Feature Icon</p>
+                                <input type="file" id="feature1_icon" name="feature1_icon" accept="image/*" class="hidden" onchange="handleConceptIconUpload(this, 'feature1')">
+                                <button type="button" onclick="document.getElementById('feature1_icon').click()" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition duration-200">
+                                    Choose Icon
+                                </button>
+                                <p class="text-xs text-gray-500 mt-1">PNG, JPG, SVG up to 5MB</p>
+                            </div>
+                            
+                            <!-- File Selected Display -->
+                            <div id="conceptFileSelected1" class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hidden">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-image text-blue-600 mr-2"></i>
+                                        <span class="text-sm text-blue-700 font-medium" id="conceptFileName1"></span>
+                                    </div>
+                                    <button type="button" onclick="clearConceptIcon('feature1')" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-blue-600 mt-1">Ready to upload</p>
                             </div>
                             
                             <!-- Icon Preview -->
                             <div id="feature1_preview" class="mt-2 hidden">
                                 <img class="w-12 h-12 object-contain border rounded" alt="Preview">
-                                <span class="text-sm text-gray-600 ml-2"></span>
+                                <p class="text-xs text-gray-500 mt-1">Preview</p>
                             </div>
                             
                             <!-- Hidden input for icon path (fallback) -->
@@ -523,12 +572,35 @@
                             <% } %>
                             
                             <!-- Icon Upload -->
-                            <div class="flex space-x-2">
-                                <input type="file" name="feature2_icon" accept="image/*" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" onchange="previewIcon(this, 'feature2_preview')">
-                                <button type="button" onclick="clearIconUpload('feature2_icon', 'feature2_preview')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Clear</button>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-indigo-400 transition duration-200">
+                                <i class="fas fa-upload text-xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-600 mb-2">Upload Feature Icon</p>
+                                <input type="file" id="feature2_icon" name="feature2_icon" accept="image/*" class="hidden" onchange="handleConceptIconUpload(this, 'feature2')">
+                                <button type="button" onclick="document.getElementById('feature2_icon').click()" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition duration-200">
+                                    Choose Icon
+                                </button>
+                                <p class="text-xs text-gray-500 mt-1">PNG, JPG, SVG up to 5MB</p>
+                            </div>
+                            
+                            <!-- File Selected Display -->
+                            <div id="conceptFileSelected2" class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hidden">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-image text-blue-600 mr-2"></i>
+                                        <span class="text-sm text-blue-700 font-medium" id="conceptFileName2"></span>
+                                    </div>
+                                    <button type="button" onclick="clearConceptIcon('feature2')" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-blue-600 mt-1">Ready to upload</p>
                             </div>
                             
                             <!-- Icon Preview -->
+                            <div id="feature2_preview" class="mt-2 hidden">
+                                <img class="w-12 h-12 object-contain border rounded" alt="Preview">
+                                <p class="text-xs text-gray-500 mt-1">Preview</p>
+                            </div>
                             <div id="feature2_preview" class="mt-2 hidden">
                                 <img class="w-12 h-12 object-contain border rounded" alt="Preview">
                                 <span class="text-sm text-gray-600 ml-2"></span>
@@ -1069,6 +1141,13 @@
     function handleVideoUpload(input) {
         const file = input.files[0];
         if (file) {
+            // Show file selected indicator
+            const fileSelected = document.getElementById('fileSelected');
+            const fileName = document.getElementById('fileName');
+            fileName.textContent = file.name;
+            fileSelected.classList.remove('hidden');
+            
+            // Show video preview
             const preview = document.getElementById('videoPreview');
             const video = preview.querySelector('video');
             
@@ -1080,10 +1159,31 @@
             reader.readAsDataURL(file);
         }
     }
+    
+    function clearSelectedFile() {
+        // Clear file input
+        const input = document.getElementById('video');
+        input.value = '';
+        
+        // Hide file selected indicator
+        const fileSelected = document.getElementById('fileSelected');
+        fileSelected.classList.add('hidden');
+        
+        // Hide preview
+        const preview = document.getElementById('videoPreview');
+        preview.classList.add('hidden');
+    }
 
     function handleIconUpload(input, serviceIndex) {
         const file = input.files[0];
         if (file) {
+            // Show file selected indicator
+            const fileSelected = document.getElementById('fileSelected' + serviceIndex);
+            const fileName = document.getElementById('fileName' + serviceIndex);
+            fileName.textContent = file.name;
+            fileSelected.classList.remove('hidden');
+            
+            // Show icon preview
             const preview = document.getElementById('iconPreview' + serviceIndex);
             const img = preview.querySelector('img');
             
@@ -1094,6 +1194,60 @@
             };
             reader.readAsDataURL(file);
         }
+    }
+    
+    function clearServiceIcon(serviceIndex) {
+        // Clear file input
+        const input = document.getElementById('service' + serviceIndex + '_icon');
+        input.value = '';
+        
+        // Hide file selected indicator
+        const fileSelected = document.getElementById('fileSelected' + serviceIndex);
+        fileSelected.classList.add('hidden');
+        
+        // Hide preview
+        const preview = document.getElementById('iconPreview' + serviceIndex);
+        preview.classList.add('hidden');
+    }
+    
+    function handleConceptIconUpload(input, featureName) {
+        const file = input.files[0];
+        if (file) {
+            const featureNumber = featureName.replace('feature', '');
+            
+            // Show file selected indicator
+            const fileSelected = document.getElementById('conceptFileSelected' + featureNumber);
+            const fileName = document.getElementById('conceptFileName' + featureNumber);
+            fileName.textContent = file.name;
+            fileSelected.classList.remove('hidden');
+            
+            // Show icon preview
+            const preview = document.getElementById(featureName + '_preview');
+            const img = preview.querySelector('img');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    function clearConceptIcon(featureName) {
+        const featureNumber = featureName.replace('feature', '');
+        
+        // Clear file input
+        const input = document.getElementById(featureName + '_icon');
+        input.value = '';
+        
+        // Hide file selected indicator
+        const fileSelected = document.getElementById('conceptFileSelected' + featureNumber);
+        fileSelected.classList.add('hidden');
+        
+        // Hide preview
+        const preview = document.getElementById(featureName + '_preview');
+        preview.classList.add('hidden');
     }
 
     function addNewService() {
