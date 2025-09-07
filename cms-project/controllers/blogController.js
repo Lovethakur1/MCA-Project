@@ -1,5 +1,6 @@
 const BlogPost = require('../models/BlogPost');
 const Content = require('../models/Content');
+const { getNavigationPages } = require('./pageController');
 
 exports.getBlogPage = async (req, res) => {
   try {
@@ -13,6 +14,9 @@ exports.getBlogPage = async (req, res) => {
 
     // Get recent posts for tabs (excluding featured)
     const recentPosts = blogPosts.slice(1, 5);
+
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
 
     // Get blog page content
     const blogContent = await Content.find({ page: 'blog' }).lean();
@@ -53,7 +57,8 @@ exports.getBlogPage = async (req, res) => {
       staticContent: contentData.static || {},
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading blog page:', error);
@@ -74,6 +79,9 @@ exports.getBlogPost = async (req, res) => {
     if (!post) {
       return res.status(404).render('404', { title: 'Post Not Found' });
     }
+
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
 
     // Get global content
     const navbarContent = await Content.find({ page: 'global', section: 'navbar' }).lean();
@@ -100,7 +108,8 @@ exports.getBlogPost = async (req, res) => {
       post,
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading blog post:', error);

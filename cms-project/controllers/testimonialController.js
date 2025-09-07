@@ -1,5 +1,6 @@
 const Testimonial = require('../models/Testimonial');
 const Content = require('../models/Content');
+const { getNavigationPages } = require('./pageController');
 
 exports.getTestimonialsPage = async (req, res) => {
   try {
@@ -15,6 +16,9 @@ exports.getTestimonialsPage = async (req, res) => {
     })
     .limit(2)
     .lean();
+
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
 
     // Get testimonial page content
     const testimonialContent = await Content.find({ page: 'testimonial' }).lean();
@@ -55,7 +59,8 @@ exports.getTestimonialsPage = async (req, res) => {
       ctaSection: contentData.cta || {},
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading testimonials page:', error);

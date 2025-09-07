@@ -57,6 +57,7 @@ app.use('/page', pageRouter); // Dynamic pages
 app.get('/:slug', async (req, res, next) => {
   const Page = require('./models/Page');
   const Testimonial = require('./models/Testimonial');
+  const { getNavigationPages } = require('./controllers/pageController');
   
   try {
     const page = await Page.findOne({ 
@@ -65,6 +66,9 @@ app.get('/:slug', async (req, res, next) => {
     });
     
     if (page) {
+      // Get navigation pages for header
+      const navigationPages = await getNavigationPages();
+      
       // Get featured testimonials for the page
       const featuredTestimonials = await Testimonial.find({ 
         featured: true, 
@@ -74,7 +78,8 @@ app.get('/:slug', async (req, res, next) => {
       res.render('dynamic-page', {
         title: page.title,
         contentData: page,
-        featuredTestimonials
+        featuredTestimonials,
+        navigationPages: navigationPages
       });
     } else {
       next(); // Continue to 404 handler

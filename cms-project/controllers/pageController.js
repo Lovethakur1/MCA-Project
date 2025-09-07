@@ -197,6 +197,7 @@ exports.getPricePage = async (req, res) => {
       title: 'Pricing',
       content: contentData,
       pricingPlans: plansByCategory,
+      pricingTabs: [], // Add empty array to prevent undefined error
       navbar,
       footer,
       siteSettings: site,
@@ -638,6 +639,9 @@ exports.getBlogPage = async (req, res) => {
       contentData[item.section][item.key] = item.value;
     });
 
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
+
     // Get all blog posts
     const BlogPost = require('../models/BlogPost');
     const blogPosts = await BlogPost.find({ status: 'published' })
@@ -680,7 +684,8 @@ exports.getBlogPage = async (req, res) => {
       faqs: faqs,
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading blog page:', error);

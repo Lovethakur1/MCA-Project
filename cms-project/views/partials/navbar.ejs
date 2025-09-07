@@ -19,8 +19,9 @@
         <%= (navbar && navbar.personalTraining && navbar.personalTraining.title) ? navbar.personalTraining.title : 'Personal Training' %>
       </a>
 
-      <div class="mega-dropdown-content" id="mega-dropdown">
+      <div class="mega-dropdown-content " id="mega-dropdown" >        
         <% if (Array.isArray(navigationPages) && navigationPages.length > 0) { %>
+          <!-- Dynamic Pages Found: <%= navigationPages.length %> pages -->
           <% navigationPages.forEach(function(page){ %>
             <a href="/page/<%= page.slug %>" style="text-decoration:none;color:inherit;">
               <div class="mega-item">
