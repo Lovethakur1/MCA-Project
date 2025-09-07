@@ -69,6 +69,10 @@ router.delete('/bootcamp/faq/:index', bootcampController.deleteFaqItem);
 router.get('/coach', coachController.getCoachAdmin);
 router.post('/coach', coachController.uploadMiddleware, coachController.updateCoachContent);
 
+// Pricing page management
+router.get('/price', adminController.getPricingPageContent);
+router.post('/price/update', adminController.updatePricingPageContent);
+
 // Blog management (separate from main blog management)
 router.get('/blog-manager', coachController.getBlogAdmin);
 router.post('/blog-manager', coachController.uploadMiddleware, coachController.createBlog);

@@ -16,6 +16,9 @@ exports.getBootcampPage = async (req, res) => {
       contentData[item.section][item.key] = item.value;
     });
 
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
+
     // Get global content
     const navbarContent = await Content.find({ page: 'global', section: 'navbar' }).lean();
     const footerContent = await Content.find({ page: 'global', section: 'footer' }).lean();
@@ -41,7 +44,8 @@ exports.getBootcampPage = async (req, res) => {
       content: contentData,
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading bootcamp page:', error);
@@ -63,6 +67,9 @@ exports.getCoachPage = async (req, res) => {
       }
       contentData[item.section][item.key] = item.value;
     });
+
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
 
     // Get blog posts for coach page (filter by Diet & Nutrition category)
     const BlogPost = require('../models/BlogPost');
@@ -125,7 +132,8 @@ exports.getCoachPage = async (req, res) => {
       faqs: faqs,
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading coach page:', error);
@@ -147,6 +155,9 @@ exports.getPricePage = async (req, res) => {
       }
       contentData[item.section][item.key] = item.value;
     });
+
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
 
     // Get pricing plans organized by category
     const pricingPlans = await PricingPlan.find({ published: true })
@@ -188,7 +199,8 @@ exports.getPricePage = async (req, res) => {
       pricingPlans: plansByCategory,
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading price page:', error);
@@ -210,6 +222,9 @@ exports.getContactPage = async (req, res) => {
       }
       contentData[item.section][item.key] = item.value;
     });
+
+    // Get navigation pages for header
+    const navigationPages = await getNavigationPages();
 
     // Get global content
     const navbarContent = await Content.find({ page: 'global', section: 'navbar' }).lean();
@@ -236,7 +251,8 @@ exports.getContactPage = async (req, res) => {
       content: contentData,
       navbar,
       footer,
-      siteSettings: site
+      siteSettings: site,
+      navigationPages: navigationPages
     });
   } catch (error) {
     console.error('Error loading contact page:', error);

@@ -1,51 +1,51 @@
 
-# Node.js dependencies
+# # Node.js dependencies
 cms-project/node_modules/
 
-# Logs
-cms-project/logs/
-cms-project/*.log
-cms-project/npm-debug.log*
-cms-project/yarn-debug.log*
-cms-project/yarn-error.log*
+# # Logs
+# cms-project/logs/
+# cms-project/*.log
+# cms-project/npm-debug.log*
+# cms-project/yarn-debug.log*
+# cms-project/yarn-error.log*
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# # OS generated files
+# .DS_Store
+# Thumbs.db
 
-# Environment files
-cms-project/.env
-cms-project/.env.local
-cms-project/.env.development.local
-cms-project/.env.test.local
-cms-project/.env.production.local
+# # Environment files
+# cms-project/.env
+# cms-project/.env.local
+# cms-project/.env.development.local
+# cms-project/.env.test.local
+# cms-project/.env.production.local
 
-# Build output
-cms-project/dist/
-cms-project/build/
+# # Build output
+# cms-project/dist/
+# cms-project/build/
 
-# IDE files
-cms-project/.vscode/
-cms-project/.idea/
+# # IDE files
+# cms-project/.vscode/
+# cms-project/.idea/
 
-# Misc
-cms-project/*.bak
-cms-project/*.tmp
+# # Misc
+# cms-project/*.bak
+# cms-project/*.tmp
 
-# Ignore media files (optional, uncomment if needed)
-# media/
-# cms-project/public/media/
+# # Ignore media files (optional, uncomment if needed)
+# # media/
+# # cms-project/public/media/
 
-# Ignore public uploads (optional, uncomment if needed)
-# cms-project/public/uploads/
+# # Ignore public uploads (optional, uncomment if needed)
+# # cms-project/public/uploads/
 
-# Ignore database files (if any)
-cms-project/*.sqlite
-cms-project/*.db
+# # Ignore database files (if any)
+# cms-project/*.sqlite
+# cms-project/*.db
 
-# Ignore generated files
-cms-project/public/js/
-cms-project/public/css/
+# # Ignore generated files
+# cms-project/public/js/
+# cms-project/public/css/
 
-# Ignore system files
-cms-project/setup.bat
+# # Ignore system files
+# cms-project/setup.bat

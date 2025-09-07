@@ -1,0 +1,84 @@
+<!-- Sidebar JavaScript -->
+<script>
+    // Sidebar toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle expandable sections
+        const toggleButtons = document.querySelectorAll('.sidebar-toggle');
+        
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const submenu = document.getElementById(targetId);
+                const chevron = this.querySelector('.fa-chevron-down');
+                
+                if (submenu.classList.contains('hidden')) {
+                    // Close all other submenus
+                    document.querySelectorAll('.sidebar-submenu').forEach(menu => {
+                        menu.classList.add('hidden');
+                    });
+                    document.querySelectorAll('.fa-chevron-down').forEach(icon => {
+                        icon.classList.remove('rotate-180');
+                    });
+                    
+                    // Open this submenu
+                    submenu.classList.remove('hidden');
+                    chevron.classList.add('rotate-180');
+                } else {
+                    // Close this submenu
+                    submenu.classList.add('hidden');
+                    chevron.classList.remove('rotate-180');
+                }
+            });
+        });
+
+        // Handle mobile sidebar
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        };
+
+        window.closeSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        };
+
+        // Auto-expand current page section
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('/admin/bootcamp')) {
+            const bootcampSubmenu = document.getElementById('bootcamp-sections');
+            const bootcampChevron = document.querySelector('[data-target="bootcamp-sections"] .fa-chevron-down');
+            if (bootcampSubmenu) {
+                bootcampSubmenu.classList.remove('hidden');
+                bootcampChevron.classList.add('rotate-180');
+            }
+        } else if (currentPath.includes('/admin/coach') || currentPath.includes('/admin/blog-manager')) {
+            const coachSubmenu = document.getElementById('coach-sections');
+            const coachChevron = document.querySelector('[data-target="coach-sections"] .fa-chevron-down');
+            if (coachSubmenu) {
+                coachSubmenu.classList.remove('hidden');
+                coachChevron.classList.add('rotate-180');
+            }
+        } else if (currentPath === '/admin' || currentPath === '/admin/dashboard') {
+            const homeSubmenu = document.getElementById('home-sections');
+            const homeChevron = document.querySelector('[data-target="home-sections"] .fa-chevron-down');
+            if (homeSubmenu) {
+                homeSubmenu.classList.remove('hidden');
+                homeChevron.classList.add('rotate-180');
+            }
+        } else if (currentPath.includes('/admin/price')) {
+            // Auto-expand for pricing page if needed
+            const homeSubmenu = document.getElementById('home-sections');
+            const homeChevron = document.querySelector('[data-target="home-sections"] .fa-chevron-down');
+            if (homeSubmenu) {
+                homeSubmenu.classList.remove('hidden');
+                homeChevron.classList.add('rotate-180');
+            }
+        }
+    });
+</script>
