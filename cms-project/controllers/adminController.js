@@ -1584,6 +1584,21 @@ exports.getContactsAPI = async (req, res) => {
   }
 };
 
+exports.getContactAPI = async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    
+    if (!contact) {
+      return res.status(404).json({ success: false, message: 'Contact not found' });
+    }
+
+    res.json(contact);
+  } catch (error) {
+    console.error('Error loading contact:', error);
+    res.status(500).json({ success: false, message: 'Failed to load contact' });
+  }
+};
+
 exports.getContactSubmission = async (req, res) => {
   try {
     const contact = await Contact.findById(req.params.id);

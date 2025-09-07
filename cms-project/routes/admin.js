@@ -138,8 +138,10 @@ router.post('/newsletter/update', adminController.updateNewsletterSection);
 // Contact submissions management
 router.get('/contacts', adminController.getContactSubmissions);
 router.get('/api/contacts', adminController.getContactsAPI);
+router.get('/api/contact/:id', adminController.getContactAPI);
 router.get('/contacts/:id', adminController.getContactSubmission);
 router.post('/contacts/:id/reply', adminController.replyToContact);
+router.put('/api/contact/:id/status', adminController.updateContactStatus);
 router.post('/contacts/:id/status', adminController.updateContactStatus);
 router.delete('/contacts/:id', adminController.deleteContactSubmission);
 

@@ -1,52 +1,39 @@
     <!-- Sidebar Styles -->
     <style>
-        .sidebar-submenu {
-            transition: all 0.3s ease;
+        .sidebar-submenu { transition: all .3s ease; }
+
+        /* Chevron animation – match the class the JS toggles */
+        .sidebar-toggle .fa-chevron-down { transition: transform .2s ease, color .2s ease; }
+        .rotate-180 { transform: rotate(180deg); }
+        .sidebar-toggle:hover .fa-chevron-down { color:#4f46e5; }
+
+        /* Submenu links: avoid layout shift by reserving border space */
+        .sidebar-submenu a{
+            display:flex; align-items:center;
+            border-left:3px solid transparent;       /* reserve space */
+            padding-left:1rem;                        /* base padding */
+            transition: background-color .2s, color .2s, padding-left .2s, border-color .2s;
+            box-sizing:border-box;
         }
-        
-        .sidebar-toggle .fa-chevron-down {
-            transition: transform 0.2s ease;
+        .sidebar-submenu a:hover{
+            background:#f8fafc;
+            border-left-color:#4f46e5;                /* just change color */
+            padding-left:1.25rem;
         }
-        
-        .sidebar-toggle:hover .fa-chevron-down {
-            color: #4f46e5;
+        .sidebar-submenu a.active{
+            background:#eef2ff;
+            border-left-color:#4f46e5;
+            color:#4f46e5; font-weight:500;
         }
-        
-        .sidebar-section .sidebar-toggle.active .fa-chevron-down {
-            transform: rotate(180deg);
-        }
-        
-        .sidebar-submenu a:hover {
-            background-color: #f8fafc;
-            border-left: 3px solid #4f46e5;
-            padding-left: 1.25rem;
-        }
-        
-        .sidebar-submenu a.active {
-            
-            background-color: #eef2ff;
-            border-left: 3px solid #4f46e5;
-            color: #4f46e5;
-            font-weight: 500;
-        }
-        
+
         /* Custom scrollbar */
-        nav::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        nav::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        
-        nav::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 2px;
-        }
-        
-        nav::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        nav::-webkit-scrollbar{ width:4px; }
+        nav::-webkit-scrollbar-track{ background:#f1f5f9; }
+        nav::-webkit-scrollbar-thumb{ background:#cbd5e1; border-radius:2px; }
+        nav::-webkit-scrollbar-thumb:hover{ background:#94a3b8; }
+
+        /* Prevent text selection flicker on quick taps */
+        .sidebar-toggle{ -webkit-tap-highlight-color:transparent; user-select:none; }
     </style>
 
     <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0" id="sidebar">
@@ -60,7 +47,7 @@
         </div>
 
         <!-- Navigation -->
-        <nav class="mt-8 overflow-y-auto h-full pb-20">
+        <nav class="mt-8 overflow-y-auto h-full pb-20 max-h-[calc(100vh-4rem)]">
             <div class="px-4 space-y-2">
                 
                 <!-- Dashboard -->
@@ -332,77 +319,59 @@
 
     <!-- Sidebar JavaScript -->
     <script>
-        // Sidebar toggle functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle expandable sections
+        document.addEventListener('DOMContentLoaded', function () {
+            // Expandable sections
             const toggleButtons = document.querySelectorAll('.sidebar-toggle');
-            
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function() {
+
+            toggleButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
                     const targetId = this.getAttribute('data-target');
-                    const submenu = document.getElementById(targetId);
-                    const chevron = this.querySelector('.fa-chevron-down');
-                    
-                    if (submenu.classList.contains('hidden')) {
-                        // Close all other submenus
-                        document.querySelectorAll('.sidebar-submenu').forEach(menu => {
-                            menu.classList.add('hidden');
-                        });
-                        document.querySelectorAll('.fa-chevron-down').forEach(icon => {
-                            icon.classList.remove('rotate-180');
-                        });
-                        
-                        // Open this submenu
-                        submenu.classList.remove('hidden');
-                        chevron.classList.add('rotate-180');
-                    } else {
-                        // Close this submenu
-                        submenu.classList.add('hidden');
-                        chevron.classList.remove('rotate-180');
-                    }
+                    const submenu  = document.getElementById(targetId);
+                    const chevron  = this.querySelector('.fa-chevron-down');
+
+                    // close others
+                    document.querySelectorAll('.sidebar-submenu').forEach(m => {
+                        if (m !== submenu) m.classList.add('hidden');
+                    });
+                    document.querySelectorAll('.sidebar-toggle .fa-chevron-down').forEach(ic => {
+                        if (ic !== chevron) ic.classList.remove('rotate-180');
+                    });
+
+                    // toggle current
+                    submenu.classList.toggle('hidden');
+                    chevron.classList.toggle('rotate-180');
                 });
             });
 
-            // Handle mobile sidebar
-            window.toggleSidebar = function() {
+            // Mobile sidebar open/close
+            window.toggleSidebar = function () {
                 const sidebar = document.getElementById('sidebar');
                 const overlay = document.getElementById('sidebarOverlay');
-                
                 sidebar.classList.toggle('-translate-x-full');
                 overlay.classList.toggle('hidden');
+                document.body.classList.toggle('overflow-hidden'); // lock body scroll
             };
 
-            window.closeSidebar = function() {
+            window.closeSidebar = function () {
                 const sidebar = document.getElementById('sidebar');
                 const overlay = document.getElementById('sidebarOverlay');
-                
                 sidebar.classList.add('-translate-x-full');
                 overlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
             };
 
-            // Auto-expand current page section
-            const currentPath = window.location.pathname;
-            if (currentPath.includes('/admin/bootcamp')) {
-                const bootcampSubmenu = document.getElementById('bootcamp-sections');
-                const bootcampChevron = document.querySelector('[data-target="bootcamp-sections"] .fa-chevron-down');
-                if (bootcampSubmenu) {
-                    bootcampSubmenu.classList.remove('hidden');
-                    bootcampChevron.classList.add('rotate-180');
-                }
-            } else if (currentPath.includes('/admin/coach') || currentPath.includes('/admin/blog-manager')) {
-                const coachSubmenu = document.getElementById('coach-sections');
-                const coachChevron = document.querySelector('[data-target="coach-sections"] .fa-chevron-down');
-                if (coachSubmenu) {
-                    coachSubmenu.classList.remove('hidden');
-                    coachChevron.classList.add('rotate-180');
-                }
-            } else if (currentPath === '/admin' || currentPath === '/admin/dashboard') {
-                const homeSubmenu = document.getElementById('home-sections');
-                const homeChevron = document.querySelector('[data-target="home-sections"] .fa-chevron-down');
-                if (homeSubmenu) {
-                    homeSubmenu.classList.remove('hidden');
-                    homeChevron.classList.add('rotate-180');
-                }
-            }
+            // Close on ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') window.closeSidebar();
+            });
+
+            // Close sidebar when clicking any link (on mobile)
+            document.querySelectorAll('#sidebar a').forEach(a => {
+                a.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) window.closeSidebar();
+                });
+            });
+
+            // Note: Auto-expand functionality removed - all sections start collapsed
         });
     </script>

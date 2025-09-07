@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - MCA CMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#64748b',
+                        accent: '#f59e0b',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        error: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom admin styles */
+        .admin-content {
+            min-height: calc(100vh - 4rem);
+        }
+        
+        /* Sidebar styles */
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        #sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 1024px) {
+            #sidebar {
+                position: fixed;
+                z-index: 40;
+                height: 100vh;
+                transform: translateX(-100%);
+            }
+            
+            #sidebar.show {
+                transform: translateX(0);
+            }
+            
+            #sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 35;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            #sidebar-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+        
+        /* Smooth animations */
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        /* Table styles */
+        .admin-table {
+            border-collapse: collapse;
+        }
+        
+        .admin-table th,
+        .admin-table td {
+            border: 1px solid #e5e7eb;
+        }
+        
+        /* Form styles */
+        .admin-form input,
+        .admin-form textarea,
+        .admin-form select {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .admin-form input:focus,
+        .admin-form textarea:focus,
+        .admin-form select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Button styles */
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-secondary {
+            background-color: #64748b;
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        
+        .btn-warning {
+            background-color: #f59e0b;
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d97706;
+        }
+        
+        .btn-error {
+            background-color: #ef4444;
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn-error:hover {
+            background-color: #dc2626;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-new {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-read {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-replied {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-archived {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Modal styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-backdrop.show .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+    
+    <!-- Sidebar Overlay for Mobile -->
+    <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+    
+    <!-- Main Content Area -->
+    <div class="lg:ml-64 admin-content">
+        <!-- Top Header Bar -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="lg:hidden text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    
+                    <!-- Page Title -->
+                    <h1 class="text-2xl font-semibold text-gray-800"><%= title %></h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- User Menu -->
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm text-gray-600">Welcome, Admin</span>
+                        <a href="/admin/logout" class="text-red-600 hover:text-red-800 text-sm">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Page Content -->
+        <main class="p-6">
+            <!-- Success/Error Messages -->
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <%= success %>
+                </div>
+            <% } %>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <!-- Dynamic Content -->
+            <%- body %>
+        </main>
+    </div>
+    
+    <!-- Global JavaScript -->
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (window.innerWidth < 1024) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+                
+                // Lock body scroll when sidebar is open
+                if (sidebar.classList.contains('show')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        // Mobile menu button
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', toggleSidebar);
+        
+        // Close sidebar when clicking links on mobile
+        document.querySelectorAll('#sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    closeSidebar();
+                }
+            });
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                closeSidebar();
+            }
+        });
+        
+        // ESC key to close sidebar
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+        
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.bg-green-100, .bg-red-100').forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+        
+        // Global utility functions
+        window.showLoading = function(element) {
+            element.classList.add('loading');
+            const spinner = element.querySelector('.fa-spinner');
+            if (spinner) spinner.classList.add('spinner');
+        };
+        
+        window.hideLoading = function(element) {
+            element.classList.remove('loading');
+            const spinner = element.querySelector('.fa-spinner');
+            if (spinner) spinner.classList.remove('spinner');
+        };
+        
+        window.showModal = function(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        };
+        
+        window.hideModal = function(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        };
+        
+        // Format dates
+        window.formatDate = function(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        };
+        
+        // Format file size
+        window.formatFileSize = function(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+        
+        // Copy to clipboard
+        window.copyToClipboard = function(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success message
+                const toast = document.createElement('div');
+                toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                toast.textContent = 'Copied to clipboard!';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 2000);
+            });
+        };
+    </script>
+</body>
+</html>
