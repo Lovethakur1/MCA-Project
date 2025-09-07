@@ -71,7 +71,7 @@ router.post('/coach', coachController.uploadMiddleware, coachController.updateCo
 
 // Pricing page management
 router.get('/price', adminController.getPricingPageContent);
-router.post('/price/update', adminController.updatePricingPageContent);
+router.post('/price/update', upload.single('hero_image_file'), adminController.updatePricingPageContent);
 
 // Blog management (separate from main blog management)
 router.get('/blog-manager', coachController.getBlogAdmin);

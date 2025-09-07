@@ -59,7 +59,7 @@
             <% } %>
 
             <div class="max-w-6xl mx-auto">
-                <form action="/admin/price/update" method="POST" class="space-y-8">
+                <form action="/admin/price/update" method="POST" enctype="multipart/form-data" class="space-y-8">
                     
                     <!-- Pricing Hero Section -->
                     <div id="hero-section" class="bg-white rounded-lg shadow">
@@ -86,17 +86,61 @@
                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                                 </div>
 
-                                <!-- Hero Image -->
+                                <!-- Hero Image Upload -->
                                 <div>
-                                    <label for="hero_image" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Hero Image URL
+                                    <label for="hero_image_file" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Hero Image Upload
                                     </label>
-                                    <input type="text" 
-                                           id="hero_image" 
-                                           name="hero[image]" 
-                                           value="<%= (content.hero && content.hero.image) ? content.hero.image : 'media/333fed2d984bcf5ebeb013e02a7cac6abaaaaf0c.png' %>"
-                                           placeholder="media/hero-image.png"
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    
+                                    <!-- Current Image Display -->
+                                    <% if (content.hero && content.hero.image) { %>
+                                        <div class="mb-3">
+                                            <div class="relative inline-block">
+                                                <img src="<%= content.hero.image %>" alt="Current hero image" class="h-20 w-20 object-cover rounded-md border border-gray-300">
+                                                <div class="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1">
+                                                    <i class="fas fa-check text-xs"></i>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1">Current: <%= content.hero.image.split('/').pop() %></p>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <!-- File Upload Input -->
+                                    <div class="space-y-3">
+                                        <input type="file" 
+                                               id="hero_image_file" 
+                                               name="hero_image_file" 
+                                               accept="image/*"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                        
+                                        <!-- Selected File Name Display -->
+                                        <div id="hero_file_info" class="hidden">
+                                            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                                <i class="fas fa-file-image text-indigo-500"></i>
+                                                <span id="hero_file_name">No file selected</span>
+                                                <span class="text-green-600 font-medium" id="hero_upload_status"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Image Preview -->
+                                        <div id="hero_image_preview" class="hidden">
+                                            <img id="hero_preview_img" class="h-32 w-32 object-cover rounded-md border border-gray-300" alt="Preview">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Fallback URL Input -->
+                                    <div class="mt-4">
+                                        <label for="hero_image_url" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Or Enter Image URL
+                                        </label>
+                                        <input type="text" 
+                                               id="hero_image_url" 
+                                               name="hero[image]" 
+                                               value="<%= (content.hero && content.hero.image) ? content.hero.image : '' %>"
+                                               placeholder="media/hero-image.png"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                        <p class="text-xs text-gray-500 mt-1">File upload will override this URL</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -315,6 +359,81 @@
             </div>
         </main>
     </div>
+
+    <!-- Image Upload JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroFileInput = document.getElementById('hero_image_file');
+            const heroFileInfo = document.getElementById('hero_file_info');
+            const heroFileName = document.getElementById('hero_file_name');
+            const heroUploadStatus = document.getElementById('hero_upload_status');
+            const heroImagePreview = document.getElementById('hero_image_preview');
+            const heroPreviewImg = document.getElementById('hero_preview_img');
+            const heroImageUrl = document.getElementById('hero_image_url');
+            
+            if (heroFileInput) {
+                heroFileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    
+                    if (file) {
+                        // Generate the filename that will be used on the backend
+                        const timestamp = Date.now();
+                        const randomNum = Math.round(Math.random() * 1E9);
+                        const ext = file.name.split('.').pop();
+                        const nameWithoutExt = file.name.replace('.' + ext, '');
+                        const generatedName = `${nameWithoutExt}-${timestamp}-${randomNum}.${ext}`;
+                        
+                        // Show file info
+                        heroFileInfo.classList.remove('hidden');
+                        heroFileName.textContent = generatedName;
+                        heroUploadStatus.textContent = 'Ready to upload';
+                        
+                        // Update the URL field with the generated filename
+                        heroImageUrl.value = `/media/${generatedName}`;
+                        
+                        // Show image preview
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                heroPreviewImg.src = e.target.result;
+                                heroImagePreview.classList.remove('hidden');
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                        
+                        // Add upload success indicator
+                        heroUploadStatus.innerHTML = '<i class="fas fa-check-circle"></i> Ready to upload';
+                        heroUploadStatus.className = 'text-green-600 font-medium flex items-center space-x-1';
+                    } else {
+                        // Hide file info if no file selected
+                        heroFileInfo.classList.add('hidden');
+                        heroImagePreview.classList.add('hidden');
+                        heroUploadStatus.textContent = '';
+                    }
+                });
+            }
+            
+            // Form submission handler
+            const form = document.querySelector('form[action="/admin/price/update"]');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const fileInput = document.getElementById('hero_image_file');
+                    if (fileInput && fileInput.files.length > 0) {
+                        // Show uploading status
+                        heroUploadStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                        heroUploadStatus.className = 'text-blue-600 font-medium flex items-center space-x-1';
+                        
+                        // Disable submit button to prevent double submission
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        if (submitBtn) {
+                            submitBtn.disabled = true;
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Uploading & Saving...';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 
     <!-- Include Sidebar JavaScript -->
     <%- include('partials/sidebar-script') %>

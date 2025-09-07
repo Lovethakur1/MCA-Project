@@ -539,9 +539,21 @@ exports.updatePricingPageContent = async (req, res) => {
   try {
     const { hero, pricing } = req.body;
     
+    // Handle file upload if present
+    if (req.file) {
+      const uploadedFileName = req.file.filename;
+      const imagePath = `/media/${uploadedFileName}`;
+      
+      // Store the uploaded image path in hero section
+      if (!hero) {
+        req.body.hero = {};
+      }
+      req.body.hero.image = imagePath;
+    }
+    
     // Update hero section content
-    if (hero) {
-      for (const [key, value] of Object.entries(hero)) {
+    if (req.body.hero) {
+      for (const [key, value] of Object.entries(req.body.hero)) {
         await Content.findOneAndUpdate(
           { page: 'price', section: 'hero', key },
           { value, type: 'text' },
@@ -561,10 +573,10 @@ exports.updatePricingPageContent = async (req, res) => {
       }
     }
     
-    res.redirect('/admin/pricing/page-content?success=Pricing page content updated');
+    res.redirect('/admin/price?success=Pricing page content updated');
   } catch (error) {
     console.error('Pricing page content update error:', error);
-    res.redirect('/admin/pricing/page-content?error=Failed to update pricing page content');
+    res.redirect('/admin/price?error=Failed to update pricing page content');
   }
 };
 
